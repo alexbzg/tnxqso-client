@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HTTPClient.cs" />
+    <Compile Include="HTTPService.cs" />
     <Compile Include="FMain.cs">
       <SubType>Form</SubType>
     </Compile>

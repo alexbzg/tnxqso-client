@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,8 +14,9 @@ namespace dxpClient
 {
     public partial class FMain : Form
     {
-        private UDPListener udpListener = new UDPListener();
-        private QSOFactory qsoFactory = new QSOFactory();
+        UDPListener udpListener = new UDPListener();
+        QSOFactory qsoFactory = new QSOFactory();
+        HTTPService http = new HTTPService("http://73.ru/dxped/uwsgi/qso");
 
         public FMain()
         {
@@ -23,11 +25,14 @@ namespace dxpClient
             udpListener.StartListener(12060);
         }
 
-        private void UDPDataReceived(object sender, DataReceivedArgs e)
+        private async void UDPDataReceived(object sender, DataReceivedArgs e)
         {
             string data = Encoding.UTF8.GetString(e.data);
             System.Diagnostics.Debug.WriteLine(data);
-            System.Diagnostics.Debug.WriteLine(qsoFactory.create(data).toJSON());
+            QSO qso = qsoFactory.create(data);
+            System.Diagnostics.Debug.WriteLine(qso.toJSON());
+            HttpResponseMessage response = await http.postQso(qso);
+            System.Diagnostics.Debug.WriteLine(response.ToString());
         }
 
         private void FMain_FormClosing(object sender, FormClosingEventArgs e)
