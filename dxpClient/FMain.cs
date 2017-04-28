@@ -31,8 +31,7 @@ namespace dxpClient
             System.Diagnostics.Debug.WriteLine(data);
             QSO qso = qsoFactory.create(data);
             System.Diagnostics.Debug.WriteLine(qso.toJSON());
-            HttpResponseMessage response = await http.postQso(qso);
-            System.Diagnostics.Debug.WriteLine(response.ToString());
+            await http.postQso(qso);
         }
 
         private void FMain_FormClosing(object sender, FormClosingEventArgs e)
