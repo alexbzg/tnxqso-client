@@ -17,6 +17,7 @@ namespace dxpClient
         ConcurrentQueue<QSO> qsoQueue = new ConcurrentQueue<QSO>();
         private volatile bool _connected;
         public bool connected {  get { return _connected; } }
+        public EventHandler<EventArgs> connectionStateChanged;
 
         public HTTPService( string _srvURI)
         {
@@ -34,6 +35,7 @@ namespace dxpClient
                 _connected = !_connected;
                 if (_connected)
                     await processQueue();
+                connectionStateChanged?.Invoke(this, new EventArgs());
             }
             pingTimer.Change(10000, Timeout.Infinite);
             return response;
@@ -69,4 +71,5 @@ namespace dxpClient
             await post( "{\"ping\": 1 }");
         }
     }
+
 }
