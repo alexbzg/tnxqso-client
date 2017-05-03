@@ -6,6 +6,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
+using XmlConfigNS;
+using System.Windows.Forms;
 
 namespace dxpClient
 {
@@ -13,16 +16,23 @@ namespace dxpClient
     {
         HttpClient client = new HttpClient();
         string srvURI;
-        Timer pingTimer;
+        System.Threading.Timer pingTimer;
         ConcurrentQueue<QSO> qsoQueue = new ConcurrentQueue<QSO>();
+        XmlConfig<List<QSO>> qsoBackup = new XmlConfig<List<QSO>>(Application.StartupPath + "\\unsent.xml");
         private volatile bool _connected;
         public bool connected {  get { return _connected; } }
         public EventHandler<EventArgs> connectionStateChanged;
 
+
         public HTTPService( string _srvURI)
         {
             srvURI = _srvURI;
-            pingTimer = new Timer(obj => ping(), null, 1, Timeout.Infinite);
+            pingTimer = new System.Threading.Timer( obj => ping(), null, 1, Timeout.Infinite);
+            Task.Run( () =>
+           {
+               foreach (QSO qso in qsoBackup.data)
+                   postQso(qso);
+           });
         }
 
         private async Task<HttpResponseMessage> post(string sContent)
@@ -47,10 +57,22 @@ namespace dxpClient
             {
                 HttpResponseMessage response = await post(qso.toJSON());
                 if (!response.IsSuccessStatusCode)
-                    qsoQueue.Enqueue(qso);
+                    addToQueue(qso);
             }
             else
-                qsoQueue.Enqueue(qso);
+                addToQueue(qso);
+        }
+
+        private void addToQueue( QSO qso)
+        {
+            qsoQueue.Enqueue(qso);
+            saveUnsent();
+        }
+
+        private void saveUnsent()
+        {
+            qsoBackup.data = qsoQueue.ToList();
+            qsoBackup.write();
         }
 
         private async Task processQueue()
@@ -60,7 +82,10 @@ namespace dxpClient
                 qsoQueue.TryPeek(out QSO qso);
                 HttpResponseMessage r = await post(qso.toJSON());
                 if (r.IsSuccessStatusCode)
+                {
                     qsoQueue.TryDequeue(out qso);
+                    saveUnsent();
+                }
                 else
                     break;
             }
