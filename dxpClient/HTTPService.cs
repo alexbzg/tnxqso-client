@@ -28,11 +28,12 @@ namespace dxpClient
         {
             srvURI = _srvURI;
             pingTimer = new System.Threading.Timer( obj => ping(), null, 1, Timeout.Infinite);
-            Task.Run( () =>
-           {
-               foreach (QSO qso in qsoBackup.data)
-                   postQso(qso);
-           });
+            if ( qsoBackup.data != null)
+                Task.Run( () =>
+               {
+                   foreach (QSO qso in qsoBackup.data)
+                       postQso(qso);
+               });
         }
 
         private async Task<HttpResponseMessage> post(string sContent)

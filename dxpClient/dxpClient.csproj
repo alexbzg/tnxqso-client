@@ -48,6 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InvokeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InvokeForm.Designer.cs">
+      <DependentUpon>InvokeForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="HTTPService.cs" />
     <Compile Include="FMain.cs">
       <SubType>Form</SubType>

@@ -13,6 +13,22 @@ namespace dxpClient
     [DataContract]
     public class QSO
     {
+        string _ts;
+        [DataMember]
+        public string myCS;
+        [DataMember]
+        public string band;
+        [DataMember]
+        public string freq;
+        [DataMember]
+        public string mode;
+        [DataMember]
+        public string cs;
+        [DataMember]
+        public string snt;
+        [DataMember]
+        public string rcv;
+
         [DataMember]
         public string ts;
         [DataMember]
@@ -51,6 +67,9 @@ namespace dxpClient
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xml);
             XmlElement root = doc.DocumentElement;
+
+            if (root.Name != "contactinfo")
+                return null;
 
             return new QSO {
                 ts = root.SelectSingleNode("timestamp").InnerText,

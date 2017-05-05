@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using XmlConfigNS;
+using InvokeFormNS;
 
 namespace StorableFormState
 {
-    public class FormWStorableState<ConfigType> : Form where ConfigType : StorableFormConfig 
+    public class FormWStorableState<ConfigType> : InvokeForm where ConfigType : StorableFormConfig 
     {
         public XmlConfig<ConfigType> config;
         public virtual void writeConfig() {
@@ -25,7 +26,7 @@ namespace StorableFormState
 
         public void restoreFormState()
         {
-              if (config != null && config.data.formLocation != null && !config.data.formLocation.IsEmpty)
+              if (config != null && config.data != null && config.data.formLocation != null && !config.data.formLocation.IsEmpty)
                   this.DesktopBounds =
                           new Rectangle(config.data.formLocation, config.data.formSize);
         }

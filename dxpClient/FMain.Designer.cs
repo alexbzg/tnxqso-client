@@ -30,6 +30,12 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.dgvQSO = new System.Windows.Forms.DataGridView();
+            this.myCS = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cs = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.snt = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rst = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Freq = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Mode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQSO)).BeginInit();
             this.SuspendLayout();
             // 
@@ -48,11 +54,54 @@
             this.dgvQSO.AllowUserToOrderColumns = true;
             this.dgvQSO.AllowUserToResizeRows = false;
             this.dgvQSO.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvQSO.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.myCS,
+            this.cs,
+            this.snt,
+            this.rst,
+            this.Freq,
+            this.Mode});
             this.dgvQSO.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvQSO.Location = new System.Drawing.Point(0, 24);
             this.dgvQSO.Name = "dgvQSO";
             this.dgvQSO.Size = new System.Drawing.Size(736, 312);
             this.dgvQSO.TabIndex = 1;
+            // 
+            // myCS
+            // 
+            this.myCS.DataPropertyName = "myCS";
+            this.myCS.HeaderText = "My Call";
+            this.myCS.Name = "myCS";
+            // 
+            // cs
+            // 
+            this.cs.DataPropertyName = "cs";
+            this.cs.HeaderText = "Ur Call";
+            this.cs.Name = "cs";
+            // 
+            // snt
+            // 
+            this.snt.DataPropertyName = "snt";
+            this.snt.HeaderText = "Ur RST";
+            this.snt.Name = "snt";
+            // 
+            // rst
+            // 
+            this.rst.DataPropertyName = "rst";
+            this.rst.HeaderText = "My RST";
+            this.rst.Name = "rst";
+            // 
+            // Freq
+            // 
+            this.Freq.DataPropertyName = "freq";
+            this.Freq.HeaderText = "Freq";
+            this.Freq.Name = "Freq";
+            // 
+            // Mode
+            // 
+            this.Mode.DataPropertyName = "mode";
+            this.Mode.HeaderText = "Mode";
+            this.Mode.Name = "Mode";
             // 
             // FMain
             // 
@@ -75,6 +124,12 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.DataGridView dgvQSO;
+        private System.Windows.Forms.DataGridViewTextBoxColumn myCS;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cs;
+        private System.Windows.Forms.DataGridViewTextBoxColumn snt;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rst;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Freq;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Mode;
     }
 }
 

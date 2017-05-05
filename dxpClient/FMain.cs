@@ -38,7 +38,13 @@ namespace dxpClient
             string data = Encoding.UTF8.GetString(e.data);
             System.Diagnostics.Debug.WriteLine(data);
             QSO qso = qsoFactory.create(data);
+            if (qso == null)
+                return;
             System.Diagnostics.Debug.WriteLine(qso.toJSON());
+            DoInvoke(() => {
+                blQSO.Insert(0, qso);
+                dgvQSO.Refresh();
+            });
             await http.postQso(qso);
         }
 
