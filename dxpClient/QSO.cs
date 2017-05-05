@@ -10,19 +10,30 @@ using System.Xml;
 
 namespace dxpClient
 {
-    [DataContract]
+    [DataContract,Serializable]
     public class QSO
     {
+        [NonSerialized]
         internal string _ts;
+        [NonSerialized]
         internal string _myCS;
+        [NonSerialized]
         internal string _band;
+        [NonSerialized]
         internal string _freq;
+        [NonSerialized]
         internal string _mode;
+        [NonSerialized]
         internal string _cs;
+        [NonSerialized]
         internal string _snt;
+        [NonSerialized]
         internal string _rcv;
+        [NonSerialized]
         internal string _rda;
+        [NonSerialized]
         internal string _wwf;
+        [NonSerialized]
         internal int _no;
 
         [DataMember]
