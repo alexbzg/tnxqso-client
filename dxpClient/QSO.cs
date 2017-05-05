@@ -13,38 +13,40 @@ namespace dxpClient
     [DataContract]
     public class QSO
     {
-        string _ts;
-        [DataMember]
-        public string myCS;
-        [DataMember]
-        public string band;
-        [DataMember]
-        public string freq;
-        [DataMember]
-        public string mode;
-        [DataMember]
-        public string cs;
-        [DataMember]
-        public string snt;
-        [DataMember]
-        public string rcv;
+        internal string _ts;
+        internal string _myCS;
+        internal string _band;
+        internal string _freq;
+        internal string _mode;
+        internal string _cs;
+        internal string _snt;
+        internal string _rcv;
+        internal string _rda;
+        internal string _wwf;
+        internal int _no;
 
         [DataMember]
-        public string ts;
+        public string ts { get { return _ts; } set { _ts = value; } }
         [DataMember]
-        public string myCS;
+        public string myCS { get { return _myCS; } set { _myCS = value; } }
         [DataMember]
-        public string band;
+        public string band { get { return _band; } set { _band = value; } }
         [DataMember]
-        public string freq;
+        public string freq { get { return _freq; } set { _freq = value; } }
         [DataMember]
-        public string mode;
+        public string mode { get { return _mode; } set { _mode = value; } }
         [DataMember]
-        public string cs;
+        public string cs { get { return _cs; } set { _cs = value; } }
         [DataMember]
-        public string snt;
+        public string snt { get { return _snt; } set { _snt = value; } }
         [DataMember]
-        public string rcv;
+        public string rcv { get { return _rcv; } set { _rcv = value; } }
+        [DataMember]
+        public string rda { get { return _rda; } set { _rda = value; } }
+        [DataMember]
+        public string wwf { get { return _wwf; } set { _wwf = value; } }
+        [DataMember]
+        public int no { get { return _no; } set { _no = value; } }
 
         public string toJSON()
         {
@@ -62,6 +64,22 @@ namespace dxpClient
 
     public class QSOFactory
     {
+        private DXpConfig settings;
+        private int no = 1;
+
+
+
+        public QSOFactory( DXpConfig _settings )
+        {
+            settings = _settings;
+            settings.rdaChanged += rdaChanged; 
+        }
+
+        private void rdaChanged(object sender, EventArgs e)
+        {
+            no = 1;
+        }
+
         public QSO create( string xml )
         {
             XmlDocument doc = new XmlDocument();
@@ -72,14 +90,17 @@ namespace dxpClient
                 return null;
 
             return new QSO {
-                ts = root.SelectSingleNode("timestamp").InnerText,
-                myCS = root.SelectSingleNode("mycall").InnerText,
-                band = root.SelectSingleNode("band").InnerText,
-                freq = root.SelectSingleNode("txfreq").InnerText,
-                mode = root.SelectSingleNode("mode").InnerText,
-                cs = root.SelectSingleNode("call").InnerText,
-                snt = root.SelectSingleNode("snt").InnerText,
-                rcv = root.SelectSingleNode("rcv").InnerText
+                _ts = root.SelectSingleNode("timestamp").InnerText,
+                _myCS = root.SelectSingleNode("mycall").InnerText,
+                _band = root.SelectSingleNode("band").InnerText,
+                _freq = root.SelectSingleNode("txfreq").InnerText,
+                _mode = root.SelectSingleNode("mode").InnerText,
+                _cs = root.SelectSingleNode("call").InnerText,
+                _snt = root.SelectSingleNode("snt").InnerText,
+                _rcv = root.SelectSingleNode("rcv").InnerText,
+                _no = no++,
+                _rda = settings.rda,
+                _wwf = settings.wwf
             };
         }
     }

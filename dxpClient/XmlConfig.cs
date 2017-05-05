@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 namespace XmlConfigNS
 {
 
-    public class XmlConfig<ConfigType>
+    public class XmlConfig<ConfigType> where ConfigType : new()
     {
         public ConfigType data;
         private string fname;
@@ -20,7 +20,7 @@ namespace XmlConfigNS
         public XmlConfig( string _fname )
         {
             fname = _fname;
-            data = default(ConfigType);
+            data = new ConfigType();
             if (File.Exists(fname) )
             {
                 XmlSerializer ser = new XmlSerializer(typeof(ConfigType));
@@ -54,6 +54,5 @@ namespace XmlConfigNS
             }
         }
     }
-
 
 }

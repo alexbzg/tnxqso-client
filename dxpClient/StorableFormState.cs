@@ -9,7 +9,7 @@ using InvokeFormNS;
 
 namespace StorableFormState
 {
-    public class FormWStorableState<ConfigType> : InvokeForm where ConfigType : StorableFormConfig 
+    public class FormWStorableState<ConfigType> : InvokeForm where ConfigType : StorableFormConfig, new()
     {
         public XmlConfig<ConfigType> config;
         public virtual void writeConfig() {
@@ -63,6 +63,8 @@ namespace StorableFormState
     {
         public System.Drawing.Point formLocation;
         public System.Drawing.Size formSize;
+
+        public StorableFormConfig() { }
     }
 
 }

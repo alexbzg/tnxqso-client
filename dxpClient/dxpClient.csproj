@@ -48,6 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FSettings.Designer.cs">
+      <DependentUpon>FSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="InvokeForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -71,6 +77,9 @@
     <Compile Include="UDPListener.cs" />
     <EmbeddedResource Include="FMain.resx">
       <DependentUpon>FMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FSettings.resx">
+      <DependentUpon>FSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
