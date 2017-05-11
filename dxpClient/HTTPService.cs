@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using XmlConfigNS;
 using System.Windows.Forms;
+using SerializationNS;
 
 namespace dxpClient
 {
@@ -17,30 +18,42 @@ namespace dxpClient
         string srvURI;
         System.Threading.Timer pingTimer;
         ConcurrentQueue<QSO> qsoQueue = new ConcurrentQueue<QSO>();
-        XmlConfig<List<QSO>> qsoBackup = new XmlConfig<List<QSO>>(Application.StartupPath + "\\unsent.xml");
+        private string unsentFilePath = Application.StartupPath + "\\unsent.dat";
         private volatile bool _connected;
+        private DXpConfig config;
         public bool connected {  get { return _connected; } }
         public EventHandler<EventArgs> connectionStateChanged;
 
 
-        public HTTPService( string _srvURI)
+        public HTTPService( string _srvURI, DXpConfig _config)
         {
             srvURI = _srvURI;
+            config = _config;
             pingTimer = new System.Threading.Timer( obj => ping(), null, 1, Timeout.Infinite);
-            if ( qsoBackup.data != null)
+            List<QSO> unsentQSOs = ProtoBufSerialization.Read<List<QSO>>(unsentFilePath);
+            if (unsentQSOs != null && unsentQSOs.Count > 0)
                 Task.Run( () =>
-               {
-                   foreach (QSO qso in qsoBackup.data)
-                       postQso(qso);
-               });
+                {
+                    foreach (QSO qso in unsentQSOs)
+                        postQso(qso);
+                    saveUnsent();
+                });
         }
 
         private async Task<HttpResponseMessage> post(string sContent)
         {
             pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
             HttpContent content = new StringContent(sContent);
-            HttpResponseMessage response = await client.PostAsync(srvURI, content);
-            if (_connected != response.IsSuccessStatusCode)
+            HttpResponseMessage response = null;
+            try
+            {
+                response = await client.PostAsync(srvURI, content);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
+            if (_connected != (response != null && response.IsSuccessStatusCode) )
             {
                 _connected = !_connected;
                 if (_connected)
@@ -56,7 +69,7 @@ namespace dxpClient
             if (qsoQueue.IsEmpty)
             {
                 HttpResponseMessage response = await post(qso.toJSON());
-                if (!response.IsSuccessStatusCode)
+                if (response == null || !response.IsSuccessStatusCode)
                     addToQueue(qso);
             }
             else
@@ -71,8 +84,7 @@ namespace dxpClient
 
         private void saveUnsent()
         {
-            qsoBackup.data = qsoQueue.ToList();
-            qsoBackup.write();
+            ProtoBufSerialization.Write<List<QSO>>(unsentFilePath, qsoQueue.ToList());
         }
 
         private async Task processQueue()
@@ -93,7 +105,7 @@ namespace dxpClient
 
         public async Task ping()
         {
-            await post( "{\"ping\": 1 }");
+            await post( "{\"status\": " + config.toJSON() + "}");
         }
     }
 

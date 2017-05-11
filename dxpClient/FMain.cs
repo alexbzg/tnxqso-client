@@ -11,6 +11,8 @@ using System.Windows.Forms;
 using UDPListenerNS;
 using StorableFormState;
 using System.Xml.Serialization;
+using SerializationNS;
+using System.Runtime.Serialization;
 
 namespace dxpClient
 {
@@ -18,15 +20,16 @@ namespace dxpClient
     {
         UDPListener udpListener = new UDPListener();
         QSOFactory qsoFactory;
-        HTTPService http = new HTTPService("http://73.ru/dxped/uwsgi/qso");
+        HTTPService http;
         private BindingList<QSO> blQSO = new BindingList<QSO>();
         private BindingSource bsQSO;
-
+        private string qsoFilePath = Application.StartupPath + "\\qso.dat";
 
         public FMain()
         {
             config = new XmlConfigNS.XmlConfig<DXpConfig>();
             qsoFactory = new QSOFactory( config.data );
+            http = new HTTPService("http://73.ru/dxped/uwsgi/qso", config.data);
             InitializeComponent();
             udpListener.DataReceived += UDPDataReceived;
             udpListener.StartListener(12060);
@@ -43,6 +46,15 @@ namespace dxpClient
                     config.data.dgvQSOColumnsWidth[co] = dgvQSO.Columns[co].Width;
                 config.write();
             }
+            List<QSO> storedQSOs = ProtoBufSerialization.ReadList<QSO>(qsoFilePath);
+            if (storedQSOs.Count > 0)
+            {
+                foreach (QSO qso in storedQSOs)
+                    dgvQSOInsert(qso);
+                QSO lastQSO = storedQSOs.Last();
+                if (lastQSO.rda == config.data.rda)
+                    qsoFactory.no = lastQSO.no + 1;
+            }
         }
 
         private async void UDPDataReceived(object sender, DataReceivedArgs e)
@@ -52,12 +64,18 @@ namespace dxpClient
             QSO qso = qsoFactory.create(data);
             if (qso == null)
                 return;
-            System.Diagnostics.Debug.WriteLine(qso.toJSON());
+            //System.Diagnostics.Debug.WriteLine(qso.toJSON());
+            dgvQSOInsert(qso);
+            ProtoBufSerialization.Write<QSO>(qsoFilePath, qso, true);
+            await http.postQso(qso);
+        }
+
+        private void dgvQSOInsert( QSO qso )
+        {
             DoInvoke(() => {
                 blQSO.Insert(0, qso);
                 dgvQSO.Refresh();
             });
-            await http.postQso(qso);
         }
 
         private void FMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -86,6 +104,7 @@ namespace dxpClient
         }
     }
 
+    [DataContract]
     public class DXpConfig : StorableFormConfig
     {
         [XmlIgnoreAttribute]
@@ -96,6 +115,7 @@ namespace dxpClient
         public EventHandler<EventArgs> rdaChanged;
 
         public int[] dgvQSOColumnsWidth;
+        [DataMember]
         public string rda {
             get { return _rda; }
             set
@@ -107,6 +127,7 @@ namespace dxpClient
                 }
             }
         }
+        [DataMember]
         public string loc
         {
             get { return _loc; }
@@ -118,8 +139,14 @@ namespace dxpClient
                 }
             }
         }
+        [DataMember]
         public string wwf;
 
         public DXpConfig() : base() { }
+
+        public string toJSON()
+        {
+            return JSONSerializer.Serialize<DXpConfig>(this);
+        }
     }
 }

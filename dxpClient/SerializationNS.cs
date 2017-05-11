@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,6 +48,84 @@ namespace SerializationNS
                 var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
                 return (T)binaryFormatter.Deserialize(stream);
             }
+        }
+    }
+
+    public static class ProtoBufSerialization
+    {
+        public static void Write<T>(string filePath, T objectToWrite, bool append = false)
+        {
+            try
+            {
+                using (FileStream file = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
+                {
+                    Serializer.SerializeWithLengthPrefix(file, objectToWrite,
+                        PrefixStyle.Base128, Serializer.ListItemTag);
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
+        }
+
+        public static T Read<T>(string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    using (FileStream file = File.OpenRead(filePath))
+                    {
+                        return Serializer.DeserializeItems<T>(
+                            file, PrefixStyle.Base128, Serializer.ListItemTag).FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
+            return default(T);
+        }
+
+
+        public static List<T> ReadList<T>(string filePath)
+        {
+            List<T> r = new List<T>();
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    using (FileStream file = File.OpenRead(filePath))
+                    {
+                        foreach (T o in Serializer.DeserializeItems<T>(
+                            file, PrefixStyle.Base128, Serializer.ListItemTag))
+                            r.Add(o);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
+            return r;
+        }
+    }
+
+    public static class JSONSerializer
+    {
+        public static string Serialize<T> (T obj)
+        {
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T));
+            string output = string.Empty;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ser.WriteObject(ms, obj);
+                output = Encoding.UTF8.GetString(ms.ToArray());
+            }
+            return output;
         }
     }
 }
