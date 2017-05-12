@@ -117,15 +117,22 @@ namespace SerializationNS
     {
         public static string Serialize<T> (T obj)
         {
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T));
-            string output = string.Empty;
-
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                ser.WriteObject(ms, obj);
-                output = Encoding.UTF8.GetString(ms.ToArray());
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T));
+                string output = string.Empty;
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ser.WriteObject(ms, obj);
+                    output = Encoding.UTF8.GetString(ms.ToArray());
+                }
+                return output;
+            } catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
             }
-            return output;
+            return string.Empty;
         }
     }
 }

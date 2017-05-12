@@ -14,6 +14,7 @@ namespace dxpClient
 {
     class HTTPService
     {
+        private static int pingIterval = 60 * 1000;
         HttpClient client = new HttpClient();
         string srvURI;
         System.Threading.Timer pingTimer;
@@ -42,6 +43,7 @@ namespace dxpClient
 
         private async Task<HttpResponseMessage> post(string sContent)
         {
+            System.Diagnostics.Debug.WriteLine(sContent);
             pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
             HttpContent content = new StringContent(sContent);
             HttpResponseMessage response = null;
@@ -60,7 +62,8 @@ namespace dxpClient
                     await processQueue();
                 connectionStateChanged?.Invoke(this, new EventArgs());
             }
-            pingTimer.Change(10000, Timeout.Infinite);
+            pingTimer.Change(pingIterval, Timeout.Infinite);
+            System.Diagnostics.Debug.WriteLine(response.ToString());
             return response;
         }
 
@@ -105,6 +108,7 @@ namespace dxpClient
 
         public async Task ping()
         {
+            System.Diagnostics.Debug.WriteLine("Ping!");
             await post( "{\"status\": " + config.toJSON() + "}");
         }
     }

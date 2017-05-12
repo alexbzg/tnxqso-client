@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using XmlConfigNS;
 using InvokeFormNS;
+using System.Runtime.Serialization;
 
 namespace StorableFormState
 {
@@ -58,7 +59,7 @@ namespace StorableFormState
     }
 
 
-
+    [DataContractAttribute]
     public class StorableFormConfig
     {
         public System.Drawing.Point formLocation;
