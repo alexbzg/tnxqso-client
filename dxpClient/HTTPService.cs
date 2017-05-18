@@ -41,38 +41,39 @@ namespace dxpClient
                 });
         }
 
-        private async Task<HttpResponseMessage> post(string sContent)
+        private async Task<bool> post(string sContent)
         {
             System.Diagnostics.Debug.WriteLine(sContent);
             pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
             HttpContent content = new StringContent(sContent);
-            HttpResponseMessage response = null;
+            bool result = false;
             try
             {
-                response = await client.PostAsync(srvURI, content);
+                HttpResponseMessage response = await client.PostAsync(srvURI, content);
+                result = response.IsSuccessStatusCode;
+                System.Diagnostics.Debug.WriteLine(response.ToString());
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e.ToString());
             }
-            if (_connected != (response != null && response.IsSuccessStatusCode) )
+            if (_connected != result )
             {
-                _connected = !_connected;
+                _connected = result;
                 if (_connected)
                     await processQueue();
                 connectionStateChanged?.Invoke(this, new EventArgs());
             }
             pingTimer.Change(pingIterval, Timeout.Infinite);
-            System.Diagnostics.Debug.WriteLine(response.ToString());
-            return response;
+            return result;
         }
 
         public async Task postQso( QSO qso)
         {
             if (qsoQueue.IsEmpty)
             {
-                HttpResponseMessage response = await post(qso.toJSON());
-                if (response == null || !response.IsSuccessStatusCode)
+                bool response = await post(qso.toJSON());
+                if (!response)
                     addToQueue(qso);
             }
             else
@@ -95,8 +96,8 @@ namespace dxpClient
             while (!qsoQueue.IsEmpty)
             {
                 qsoQueue.TryPeek(out QSO qso);
-                HttpResponseMessage r = await post(qso.toJSON());
-                if (r.IsSuccessStatusCode)
+                bool r = await post(qso.toJSON());
+                if (r)
                 {
                     qsoQueue.TryDequeue(out qso);
                     saveUnsent();
