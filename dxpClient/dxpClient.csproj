@@ -57,6 +57,7 @@
     <Compile Include="FSettings.Designer.cs">
       <DependentUpon>FSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="GPSReader.cs" />
     <Compile Include="InvokeForm.cs">
       <SubType>Form</SubType>
     </Compile>

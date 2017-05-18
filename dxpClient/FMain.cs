@@ -13,6 +13,8 @@ using StorableFormState;
 using System.Xml.Serialization;
 using SerializationNS;
 using System.Runtime.Serialization;
+using GpsReaderNS;
+
 
 namespace dxpClient
 {
@@ -21,9 +23,11 @@ namespace dxpClient
         UDPListener udpListener = new UDPListener();
         QSOFactory qsoFactory;
         HTTPService http;
-        private BindingList<QSO> blQSO = new BindingList<QSO>();
-        private BindingSource bsQSO;
-        private string qsoFilePath = Application.StartupPath + "\\qso.dat";
+        BindingList<QSO> blQSO = new BindingList<QSO>();
+        BindingSource bsQSO;
+        string qsoFilePath = Application.StartupPath + "\\qso.dat";
+        GPSReader gpsReader = new GPSReader("COM5");
+
 
         public FMain()
         {
