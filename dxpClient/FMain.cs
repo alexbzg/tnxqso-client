@@ -13,7 +13,7 @@ using StorableFormState;
 using System.Xml.Serialization;
 using SerializationNS;
 using System.Runtime.Serialization;
-using GpsReaderNS;
+using GPSReaderNS;
 
 
 namespace dxpClient
@@ -26,7 +26,6 @@ namespace dxpClient
         BindingList<QSO> blQSO = new BindingList<QSO>();
         BindingSource bsQSO;
         string qsoFilePath = Application.StartupPath + "\\qso.dat";
-        GPSReader gpsReader = new GPSReader("COM5");
 
 
         public FMain()
@@ -59,6 +58,7 @@ namespace dxpClient
                 if (lastQSO.rda == config.data.rda)
                     qsoFactory.no = lastQSO.no + 1;
             }
+            config.data.startGPSReader();
         }
 
         private async void UDPDataReceived(object sender, DataReceivedArgs e)
@@ -103,6 +103,7 @@ namespace dxpClient
                 config.data.rda = fs.rda;
                 config.data.loc = fs.loc;
                 config.data.wwf = fs.wwf;
+                config.data.gpsReaderDeviceID = fs.gpsReaderDeviceID;
                 config.write();
             }
         }
@@ -111,12 +112,36 @@ namespace dxpClient
     [DataContract]
     public class DXpConfig : StorableFormConfig
     {
+        private static string portByDeviceID(string deviceID)
+        {
+            List<SerialDeviceInfo> ports = GPSReader.listSerialDevices();
+            SerialDeviceInfo port = ports.FirstOrDefault(x => x.deviceID == deviceID);
+            return port?.portName;
+        }
+
         [XmlIgnoreAttribute]
         private string _rda;
         [XmlIgnoreAttribute]
         private string _loc;
         [XmlIgnoreAttribute]
         public EventHandler<EventArgs> rdaChanged;
+        [XmlIgnoreAttribute]
+        GPSReader gpsReader;
+        [XmlIgnore]
+        string _gpsReaderDeviceID;
+        public string gpsReaderDeviceID {
+            get { return _gpsReaderDeviceID; }
+            set
+            {
+                if (value != _gpsReaderDeviceID)
+                {
+                    _gpsReaderDeviceID = value;
+                    startGPSReader();
+                }
+            }
+        }
+
+        
 
         public int[] dgvQSOColumnsWidth;
         [DataMember]
@@ -146,11 +171,57 @@ namespace dxpClient
         [DataMember]
         public string wwf;
 
-        public DXpConfig() : base() { }
+        public DXpConfig() : base() {
+        }
 
         public string toJSON()
         {
             return JSONSerializer.Serialize<DXpConfig>(this);
         }
+
+        public void startGPSReader()
+        {
+            string portName = portByDeviceID(_gpsReaderDeviceID);
+            if (portName != null && portName != "")
+            {
+                gpsReader = new GPSReader(portName);
+                gpsReader.locationChanged += locationChanged;
+            }
+        }
+
+        private void locationChanged( object sender, EventArgs e)
+        {
+            Console.WriteLine(qth(gpsReader.dlat, gpsReader.dlong));
+        }
+
+        private string qth(double _lat, double _lng)
+        {
+            double lat = _lat;
+            double lng = _lng;
+            string qth = "";
+            lat += 90;
+            lng += 180;
+            lat = lat / 10 + 0.0000001;
+            lng = lng / 20 + 0.0000001;
+            qth += (char)(65 + lng);
+            qth += (char)(65 + lat);
+            lat = 10 * (lat - Math.Truncate(lat));
+            lng = 10 * (lng - Math.Truncate(lng));
+            qth += (char)(48 + lng);
+            qth += (char)(48 + lat);
+            lat = 24 * (lat - Math.Truncate(lat));
+            lng = 24 * (lng - Math.Truncate(lng));
+            qth += (char)(65 + lng);
+            qth += (char)(65 + lat);
+            lat = 10 * (lat - Math.Truncate(lat));
+            lng = 10 * (lng - Math.Truncate(lng));
+/*            qth += (char)(48 + lng) + (char)(48 + lat);
+            lat = 24 * (lat - Math.Truncate(lat));
+            lng = 24 * (lng - Math.Truncate(lng));
+            qth += (char)(65 + lng) + (char)(65 + lat);*/
+            return qth;
+        } // returnQth()
+
+
     }
 }

@@ -36,6 +36,8 @@
             this.tbRDA = new System.Windows.Forms.TextBox();
             this.tbLoc = new System.Windows.Forms.TextBox();
             this.tbWWF = new System.Windows.Forms.TextBox();
+            this.cbGPSPort = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // bOK
@@ -108,11 +110,30 @@
             this.tbWWF.Size = new System.Drawing.Size(187, 26);
             this.tbWWF.TabIndex = 7;
             // 
+            // cbGPSPort
+            // 
+            this.cbGPSPort.FormattingEnabled = true;
+            this.cbGPSPort.Location = new System.Drawing.Point(94, 119);
+            this.cbGPSPort.Name = "cbGPSPort";
+            this.cbGPSPort.Size = new System.Drawing.Size(162, 28);
+            this.cbGPSPort.TabIndex = 8;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 122);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(76, 20);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "GPS Port";
+            // 
             // FSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(268, 301);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.cbGPSPort);
             this.Controls.Add(this.tbWWF);
             this.Controls.Add(this.tbLoc);
             this.Controls.Add(this.tbRDA);
@@ -140,5 +161,7 @@
         private System.Windows.Forms.TextBox tbRDA;
         private System.Windows.Forms.TextBox tbLoc;
         private System.Windows.Forms.TextBox tbWWF;
+        private System.Windows.Forms.ComboBox cbGPSPort;
+        private System.Windows.Forms.Label label4;
     }
 }
