@@ -27,7 +27,7 @@ namespace dxpClient
             InitializeComponent();
             tbRDA.Text = data.rda;
             tbLoc.Text = data.loc;
-            tbWWF.Text = data.wwf;
+            tbWWF.Text = data.wff;
 
             foreach (SerialDeviceInfo sp in serialPorts)
             {

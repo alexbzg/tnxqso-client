@@ -24,6 +24,7 @@ namespace dxpClient
         internal string _snt;
         internal string _rcv;
         internal string _rda;
+        internal string _rafa;
         internal string _wff;
         internal int _no;
 
@@ -49,6 +50,8 @@ namespace dxpClient
         public string wff { get { return _wff; } set { _wff = value; } }
         [DataMember, ProtoMember(11)]
         public int no { get { return _no; } set { _no = value; } }
+        [DataMember, ProtoMember(12)]
+        public string rafa { get { return _rafa; } set { _rafa = value; } }
 
         public string toJSON()
         {
@@ -94,7 +97,8 @@ namespace dxpClient
                 _rcv = root.SelectSingleNode("rcv").InnerText,
                 _no = no++,
                 _rda = settings.rda,
-                _wff = settings.wwf
+                _rafa = settings.rafa,
+                _wff = settings.wff
             };
         }
     }

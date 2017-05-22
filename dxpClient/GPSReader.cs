@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define FAKE_GPS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ using System.IO.Ports;
 using System.Globalization;
 using System.Management;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace GPSReaderNS
 {
@@ -16,6 +19,15 @@ namespace GPSReaderNS
         public string portName;
         public string caption;
         public string deviceID;
+    }
+
+    class DebugCoords
+    {
+        internal string loc;
+        internal string lat;
+        internal string latD;
+        internal string lng;
+        internal string lngD;
     }
 
     class GPSReader
@@ -73,10 +85,44 @@ namespace GPSReaderNS
             {
                 System.Diagnostics.Debug.WriteLine(e.ToString());
             }
+#if DEBUG
+#if FAKE_GPS
+            NotifyIcon notifyIcon = new NotifyIcon();
+            notifyIcon.Visible = true;
+            notifyIcon.Icon = SystemIcons.Hand;
+            notifyIcon.ContextMenuStrip = new ContextMenuStrip();
+            foreach ( DebugCoords dc in new DebugCoords[] {
+                new DebugCoords
+                {
+                    loc = "LP04IO",
+                    lat = "6460.6076",
+                    latD = "N",
+                    lng = "4071.2153",
+                    lngD = "E"
+                }
+            })
+            {
+                ToolStripMenuItem mi = new ToolStripMenuItem(dc.loc);
+                mi.Click += delegate (object sender, EventArgs e)
+                {
+                    parseLat(dc.lat, dc.latD);
+                    parseLong(dc.lng, dc.lngD);
+                    locationChanged?.Invoke(this, new EventArgs());
+                };
+                notifyIcon.ContextMenuStrip.Items.Add(mi);
+
+            }
+#endif
+#endif
         }
 
         private void sportDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
+#if DEBUG
+#if FAKE_GPS
+            return;
+#endif
+#endif
             byte[] buf = new byte[sport.BytesToRead];
             sport.Read(buf, 0, buf.Length);
             for (int c = 0; c < buf.Length; c++)
@@ -101,37 +147,47 @@ namespace GPSReaderNS
             return r;
         }
 
+        private bool parseLat( string n, string d)
+        {
+            double newLat = double.Parse(n, NumberStyles.Any, CultureInfo.InvariantCulture) / 100;
+            double signLat = newLat * (d == "N" ? 1 : -1);
+            if (signLat != dlat)
+            {
+                _dlat = signLat;
+                double[] lat = splitDouble(newLat);
+                _lat = d + lat[0].ToString() + "°" + (lat[1] * 100).ToString("00.00", CultureInfo.InvariantCulture);
+                return true;
+            }
+            return false;
+        }
+
+        private bool parseLong(string n, string d)
+        {
+            double newLong = double.Parse(n, NumberStyles.Any, CultureInfo.InvariantCulture) / 100;
+            double signLong = newLong * (d == "E" ? 1 : -1);
+            if (signLong != dlong)
+            {
+                _dlong = signLong;
+                double[] lon = splitDouble(newLong);
+                _long = d + lon[0].ToString() + "°" + (lon[1] * 100).ToString("00.00", CultureInfo.InvariantCulture);
+                return true;
+            }
+            return false;
+        }
+
+
+
         private void parse(string line)
         {
             string[] lineArr = line.Split(',');
             if (lineArr.Count() > 5 && ( lineArr[3] == "N" || lineArr[3] == "S" ) && (lineArr[5] == "W" || lineArr[5] == "E") )
             {
-                bool fl = false;
                 try
                 {
-                    //Latitude
-                    double newLat = double.Parse(lineArr[2], NumberStyles.Any, CultureInfo.InvariantCulture) / 100;
-                    double signLat = newLat * (lineArr[3] == "N" ? 1 : -1);
-                    if (signLat != dlat)
-                    {
-                        _dlat = signLat;
-                        fl = true;
-                        double[] lat = splitDouble(newLat);
-                        _lat = lineArr[3] + lat[0].ToString() + "°" + (lat[1] * 100).ToString("00.00", CultureInfo.InvariantCulture);
-                    }
+                    bool flLat = parseLat(lineArr[2], lineArr[3]);
+                    bool flLng = parseLong(lineArr[4],lineArr[5]);
 
-                    //Longitude
-                    double newLong = double.Parse(lineArr[4], NumberStyles.Any, CultureInfo.InvariantCulture) / 100;
-                    double signLong = newLong * (lineArr[5] == "E" ? 1 : -1);
-                    if (signLong != dlong)
-                    {
-                        _dlong = signLong;
-                        fl = true;
-                        double[] lon = splitDouble(newLong);
-                        _long = lineArr[5] + lon[0].ToString() + "°" + (lon[1] * 100).ToString("00.00", CultureInfo.InvariantCulture);
-                    }
-
-                    if (fl)
+                    if (flLat || flLng)
                     {
                         System.Diagnostics.Debug.WriteLine(_lat + " " + _long);
                         locationChanged?.Invoke(this, new EventArgs());

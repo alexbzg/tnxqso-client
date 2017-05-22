@@ -39,7 +39,8 @@
             this.Freq = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Mode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rda = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.wwf = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rafa = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.wff = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQSO)).BeginInit();
             this.SuspendLayout();
@@ -50,7 +51,7 @@
             this.miSettings});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(954, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1047, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip";
             // 
@@ -67,7 +68,6 @@
             this.dgvQSO.AllowUserToDeleteRows = false;
             this.dgvQSO.AllowUserToResizeRows = false;
             this.dgvQSO.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvQSO.ColumnWidthChanged += DgvQSO_ColumnWidthChanged;
             this.dgvQSO.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.no,
             this.myCS,
@@ -77,11 +77,12 @@
             this.Freq,
             this.Mode,
             this.rda,
-            this.wwf});
+            this.rafa,
+            this.wff});
             this.dgvQSO.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvQSO.Location = new System.Drawing.Point(0, 24);
             this.dgvQSO.Name = "dgvQSO";
-            this.dgvQSO.Size = new System.Drawing.Size(954, 355);
+            this.dgvQSO.Size = new System.Drawing.Size(1047, 395);
             this.dgvQSO.TabIndex = 1;
             // 
             // no
@@ -129,20 +130,26 @@
             // rda
             // 
             this.rda.DataPropertyName = "rda";
-            this.rda.HeaderText = "rda";
+            this.rda.HeaderText = "RDA";
             this.rda.Name = "rda";
             // 
-            // wwf
+            // rafa
             // 
-            this.wwf.DataPropertyName = "wwf";
-            this.wwf.HeaderText = "wwf";
-            this.wwf.Name = "wwf";
+            this.rafa.DataPropertyName = "rafa";
+            this.rafa.HeaderText = "RAFA";
+            this.rafa.Name = "rafa";
+            // 
+            // wff
+            // 
+            this.wff.DataPropertyName = "wff";
+            this.wff.HeaderText = "WFF";
+            this.wff.Name = "wff";
             // 
             // FMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(954, 379);
+            this.ClientSize = new System.Drawing.Size(1047, 419);
             this.Controls.Add(this.dgvQSO);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
@@ -172,7 +179,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Freq;
         private System.Windows.Forms.DataGridViewTextBoxColumn Mode;
         private System.Windows.Forms.DataGridViewTextBoxColumn rda;
-        private System.Windows.Forms.DataGridViewTextBoxColumn wwf;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rafa;
+        private System.Windows.Forms.DataGridViewTextBoxColumn wff;
     }
 }
 

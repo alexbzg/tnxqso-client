@@ -14,7 +14,7 @@ using System.Xml.Serialization;
 using SerializationNS;
 using System.Runtime.Serialization;
 using GPSReaderNS;
-
+using System.IO;
 
 namespace dxpClient
 {
@@ -58,7 +58,30 @@ namespace dxpClient
                 if (lastQSO.rda == config.data.rda)
                     qsoFactory.no = lastQSO.no + 1;
             }
+            config.data.rafaChanged += rafaChanged;
             config.data.startGPSReader();
+        }
+
+        private void rafaChanged( object sender, EventArgs e)
+        {
+            showBalloon("New RAFA " + config.data.rafa);
+        }
+
+        private void showBalloon( string text )
+        {
+            DoInvoke(() =>
+           {
+               NotifyIcon notifyIcon = new NotifyIcon();
+               notifyIcon.Visible = true;
+               notifyIcon.Icon = SystemIcons.Information;
+               notifyIcon.BalloonTipTitle = "DXpedition";
+               notifyIcon.BalloonTipText = text;
+               notifyIcon.ShowBalloonTip(0);
+               notifyIcon.BalloonTipClosed += delegate (object sender, EventArgs e)
+               {
+                   notifyIcon.Dispose();
+               };
+           });
         }
 
         private async void UDPDataReceived(object sender, DataReceivedArgs e)
@@ -102,11 +125,13 @@ namespace dxpClient
             {
                 config.data.rda = fs.rda;
                 config.data.loc = fs.loc;
-                config.data.wwf = fs.wwf;
+                config.data.wff = fs.wwf;
                 config.data.gpsReaderDeviceID = fs.gpsReaderDeviceID;
                 config.write();
             }
         }
+
+        
     }
 
     [DataContract]
@@ -141,6 +166,15 @@ namespace dxpClient
             }
         }
 
+        [XmlIgnore]
+        Dictionary<string, string> rafaData = new Dictionary<string, string>();
+        [XmlIgnore]
+        string _rafa;
+        [DataMember]
+        public string rafa { get { return _rafa; } set { _rafa = value; } }
+        [XmlIgnore]
+        public EventHandler<EventArgs> rafaChanged;
+
         
 
         public int[] dgvQSOColumnsWidth;
@@ -165,13 +199,43 @@ namespace dxpClient
                 if (value != _loc)
                 {
                     _loc = value;
+                    string newRafa = rafaData.ContainsKey(_loc) ? rafaData[_loc] : null;
+                    if ( newRafa != rafa)
+                    {
+                        rafa = newRafa;
+                        rafaChanged?.Invoke(this, new EventArgs());
+                    }
                 }
             }
         }
         [DataMember]
-        public string wwf;
+        public string wff;
 
         public DXpConfig() : base() {
+            try
+            {
+                using (StreamReader sr = new StreamReader(Application.StartupPath + "\\rafa.csv"))
+                {
+                    do
+                    {
+                        string line = sr.ReadLine();
+                        string[] lineData = line.Split(';');
+                        if ( lineData[0] ==  "" ) 
+                        {
+                            string[] keys = lineData[3].Split(',');
+                            foreach (string key in keys)
+                                rafaData[key] = lineData[1];
+                        }
+                    } while (sr.Peek() >= 0);
+
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+                MessageBox.Show("Rafa data could not be loaded: " + e.ToString(), "DXpedition", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
         }
 
         public string toJSON()
@@ -191,7 +255,7 @@ namespace dxpClient
 
         private void locationChanged( object sender, EventArgs e)
         {
-            Console.WriteLine(qth(gpsReader.dlat, gpsReader.dlong));
+            loc = qth(gpsReader.dlat, gpsReader.dlong);
         }
 
         private string qth(double _lat, double _lng)
