@@ -124,7 +124,6 @@ namespace dxpClient
             if ( fs.ShowDialog(this) == DialogResult.OK )
             {
                 config.data.rda = fs.rda;
-                config.data.loc = fs.loc;
                 config.data.wff = fs.wwf;
                 config.data.gpsReaderDeviceID = fs.gpsReaderDeviceID;
                 config.write();

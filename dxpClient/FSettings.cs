@@ -16,7 +16,6 @@ namespace dxpClient
     public partial class FSettings : Form
     {
         public string rda {  get { return tbRDA.Text; } }
-        public string loc { get { return tbLoc.Text; } }
         public string wwf { get { return tbWWF.Text; } }
         public string gpsReaderDeviceID {  get { return serialPorts[cbGPSPort.SelectedIndex].deviceID; } }
 
@@ -26,7 +25,6 @@ namespace dxpClient
         {
             InitializeComponent();
             tbRDA.Text = data.rda;
-            tbLoc.Text = data.loc;
             tbWWF.Text = data.wff;
 
             foreach (SerialDeviceInfo sp in serialPorts)

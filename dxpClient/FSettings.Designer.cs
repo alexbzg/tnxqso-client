@@ -31,10 +31,8 @@
             this.bOK = new System.Windows.Forms.Button();
             this.bCancel = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.tbRDA = new System.Windows.Forms.TextBox();
-            this.tbLoc = new System.Windows.Forms.TextBox();
             this.tbWWF = new System.Windows.Forms.TextBox();
             this.cbGPSPort = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -71,15 +69,6 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "RDA";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 45);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 20);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Loc";
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -95,13 +84,6 @@
             this.tbRDA.Name = "tbRDA";
             this.tbRDA.Size = new System.Drawing.Size(187, 26);
             this.tbRDA.TabIndex = 5;
-            // 
-            // tbLoc
-            // 
-            this.tbLoc.Location = new System.Drawing.Point(69, 42);
-            this.tbLoc.Name = "tbLoc";
-            this.tbLoc.Size = new System.Drawing.Size(187, 26);
-            this.tbLoc.TabIndex = 6;
             // 
             // tbWWF
             // 
@@ -135,10 +117,8 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.cbGPSPort);
             this.Controls.Add(this.tbWWF);
-            this.Controls.Add(this.tbLoc);
             this.Controls.Add(this.tbRDA);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.bCancel);
             this.Controls.Add(this.bOK);
@@ -156,10 +136,8 @@
         private System.Windows.Forms.Button bOK;
         private System.Windows.Forms.Button bCancel;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbRDA;
-        private System.Windows.Forms.TextBox tbLoc;
         private System.Windows.Forms.TextBox tbWWF;
         private System.Windows.Forms.ComboBox cbGPSPort;
         private System.Windows.Forms.Label label4;

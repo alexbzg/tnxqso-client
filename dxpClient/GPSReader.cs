@@ -1,4 +1,4 @@
-﻿#define FAKE_GPS
+﻿//#define FAKE_GPS
 using System;
 using System.Collections.Generic;
 using System.Linq;
