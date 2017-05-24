@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using XmlConfigNS;
 using System.Windows.Forms;
 using SerializationNS;
+using GPSReaderNS;
 
 namespace dxpClient
 {
@@ -110,7 +111,7 @@ namespace dxpClient
         public async Task ping()
         {
             System.Diagnostics.Debug.WriteLine("Ping!");
-            await post( "{\"status\": " + config.toJSON() + "}");
+            await post( "{\"location\": " + config.toJSON() + "}");
         }
     }
 

@@ -21,6 +21,23 @@ namespace GPSReaderNS
         public string deviceID;
     }
 
+    public class Coords
+    {
+        public double lat;
+        public double lng;
+    }
+
+    public class StringCoords
+    {
+        public string lat;
+        public string lng;
+
+        public string ToString()
+        {
+            return lat + " " + lng;
+        }
+    }
+
     class DebugCoords
     {
         internal string loc;
@@ -60,16 +77,11 @@ namespace GPSReaderNS
         }
 
         SerialPort sport;
+        private Coords _coords = new Coords();
+        private StringCoords _sCoords = new StringCoords(); 
 
-        string _lat;
-        string _long;
-        double _dlat;
-        double _dlong;
-
-        public string latitude { get { return _lat; } }
-        public string longitude { get { return _long; } }
-        public double dlat { get { return _dlat; } }
-        public double dlong { get { return _dlong; } }
+        public Coords coords { get { return _coords; } }
+        public StringCoords strCoords { get { return _sCoords; } }
         volatile StringBuilder sb = new StringBuilder();
         public EventHandler<EventArgs> locationChanged;
 
@@ -151,11 +163,11 @@ namespace GPSReaderNS
         {
             double newLat = double.Parse(n, NumberStyles.Any, CultureInfo.InvariantCulture) / 100;
             double signLat = newLat * (d == "N" ? 1 : -1);
-            if (signLat != dlat)
+            if (signLat != _coords.lat)
             {
-                _dlat = signLat;
+                _coords.lat = signLat;
                 double[] lat = splitDouble(newLat);
-                _lat = d + lat[0].ToString() + "°" + (lat[1] * 100).ToString("00.00", CultureInfo.InvariantCulture);
+                _sCoords.lat = d + lat[0].ToString() + "°" + (lat[1] * 100).ToString("00.00", CultureInfo.InvariantCulture);
                 return true;
             }
             return false;
@@ -165,11 +177,11 @@ namespace GPSReaderNS
         {
             double newLong = double.Parse(n, NumberStyles.Any, CultureInfo.InvariantCulture) / 100;
             double signLong = newLong * (d == "E" ? 1 : -1);
-            if (signLong != dlong)
+            if (signLong != _coords.lng)
             {
-                _dlong = signLong;
+                _coords.lng = signLong;
                 double[] lon = splitDouble(newLong);
-                _long = d + lon[0].ToString() + "°" + (lon[1] * 100).ToString("00.00", CultureInfo.InvariantCulture);
+                _sCoords.lng = d + lon[0].ToString() + "°" + (lon[1] * 100).ToString("00.00", CultureInfo.InvariantCulture);
                 return true;
             }
             return false;
@@ -189,7 +201,7 @@ namespace GPSReaderNS
 
                     if (flLat || flLng)
                     {
-                        System.Diagnostics.Debug.WriteLine(_lat + " " + _long);
+                        System.Diagnostics.Debug.WriteLine(_sCoords.ToString());
                         locationChanged?.Invoke(this, new EventArgs());
                     }
                 }

@@ -23,6 +23,7 @@ namespace dxpClient
         UDPListener udpListener = new UDPListener();
         QSOFactory qsoFactory;
         HTTPService http;
+        GPSReader gpsReader;
         BindingList<QSO> blQSO = new BindingList<QSO>();
         BindingSource bsQSO;
         string qsoFilePath = Application.StartupPath + "\\qso.dat";
@@ -59,12 +60,34 @@ namespace dxpClient
                     qsoFactory.no = lastQSO.no + 1;
             }
             config.data.rafaChanged += rafaChanged;
-            config.data.startGPSReader();
+            startGPSReader();
+        }
+
+        private void startGPSReader()
+        {
+            List<SerialDeviceInfo> ports = GPSReader.listSerialDevices();
+            SerialDeviceInfo port = ports.FirstOrDefault(x => x.deviceID == config.data.gpsReaderDeviceID);
+            if ( port != null ) {
+                string portName = port.portName;
+                gpsReader = new GPSReader(portName);
+                gpsReader.locationChanged += locationChanged;
+            }
+        }
+
+        private void locationChanged( object sender, EventArgs e )
+        {
+            string newLoc = DXpConfig.qth(gpsReader.coords);
+            if ( newLoc != config.data.loc)
+            {
+                config.data.loc = newLoc;
+                config.write();
+            }
         }
 
         private void rafaChanged( object sender, EventArgs e)
         {
             showBalloon("New RAFA " + config.data.rafa);
+            config.write();
         }
 
         private void showBalloon( string text )
@@ -125,7 +148,11 @@ namespace dxpClient
             {
                 config.data.rda = fs.rda;
                 config.data.wff = fs.wwf;
-                config.data.gpsReaderDeviceID = fs.gpsReaderDeviceID;
+                if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID)
+                {
+                    config.data.gpsReaderDeviceID = fs.gpsReaderDeviceID;
+                    startGPSReader();
+                }
                 config.write();
             }
         }
@@ -136,12 +163,6 @@ namespace dxpClient
     [DataContract]
     public class DXpConfig : StorableFormConfig
     {
-        private static string portByDeviceID(string deviceID)
-        {
-            List<SerialDeviceInfo> ports = GPSReader.listSerialDevices();
-            SerialDeviceInfo port = ports.FirstOrDefault(x => x.deviceID == deviceID);
-            return port?.portName;
-        }
 
         [XmlIgnoreAttribute]
         private string _rda;
@@ -155,14 +176,7 @@ namespace dxpClient
         string _gpsReaderDeviceID;
         public string gpsReaderDeviceID {
             get { return _gpsReaderDeviceID; }
-            set
-            {
-                if (value != _gpsReaderDeviceID)
-                {
-                    _gpsReaderDeviceID = value;
-                    startGPSReader();
-                }
-            }
+            set { _gpsReaderDeviceID = value; }
         }
 
         [XmlIgnore]
@@ -184,7 +198,7 @@ namespace dxpClient
             {
                 if ( value != _rda )
                 {
-                    _rda = value;
+                    _rda = value;                    
                     rdaChanged?.Invoke(this, new EventArgs());
                 }
             }
@@ -242,25 +256,12 @@ namespace dxpClient
             return JSONSerializer.Serialize<DXpConfig>(this);
         }
 
-        public void startGPSReader()
-        {
-            string portName = portByDeviceID(_gpsReaderDeviceID);
-            if (portName != null && portName != "")
-            {
-                gpsReader = new GPSReader(portName);
-                gpsReader.locationChanged += locationChanged;
-            }
-        }
+        
 
-        private void locationChanged( object sender, EventArgs e)
+        public static string qth(Coords c)
         {
-            loc = qth(gpsReader.dlat, gpsReader.dlong);
-        }
-
-        private string qth(double _lat, double _lng)
-        {
-            double lat = _lat;
-            double lng = _lng;
+            double lat = c.lat;
+            double lng = c.lng;
             string qth = "";
             lat += 90;
             lng += 180;
