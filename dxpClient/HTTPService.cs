@@ -22,15 +22,15 @@ namespace dxpClient
         ConcurrentQueue<QSO> qsoQueue = new ConcurrentQueue<QSO>();
         private string unsentFilePath = Application.StartupPath + "\\unsent.dat";
         private volatile bool _connected;
-        private DXpConfig config;
         public bool connected {  get { return _connected; } }
         public EventHandler<EventArgs> connectionStateChanged;
+        private GPSReader gpsReader;
 
 
-        public HTTPService( string _srvURI, DXpConfig _config)
+        public HTTPService( string _srvURI, GPSReader _gpsReader )
         {
             srvURI = _srvURI;
-            config = _config;
+            gpsReader = _gpsReader;
             pingTimer = new System.Threading.Timer( obj => ping(), null, 1, Timeout.Infinite);
             List<QSO> unsentQSOs = ProtoBufSerialization.Read<List<QSO>>(unsentFilePath);
             if (unsentQSOs != null && unsentQSOs.Count > 0)
@@ -111,7 +111,7 @@ namespace dxpClient
         public async Task ping()
         {
             System.Diagnostics.Debug.WriteLine("Ping!");
-            await post( "{\"location\": " + config.toJSON() + "}");
+            await post( "{\"location\": " + gpsReader.coords.toJSON()  + "}");
         }
     }
 

@@ -33,7 +33,6 @@ namespace dxpClient
         {
             config = new XmlConfigNS.XmlConfig<DXpConfig>();
             qsoFactory = new QSOFactory( config.data );
-            http = new HTTPService("http://73.ru/dxped/uwsgi/qso", config.data);
             InitializeComponent();
             udpListener.DataReceived += UDPDataReceived;
             udpListener.StartListener(12060);
@@ -61,6 +60,7 @@ namespace dxpClient
             }
             config.data.rafaChanged += rafaChanged;
             startGPSReader();
+            http = new HTTPService("http://73.ru/dxped/uwsgi/qso", gpsReader);
         }
 
         private void startGPSReader()
@@ -170,8 +170,6 @@ namespace dxpClient
         private string _loc;
         [XmlIgnoreAttribute]
         public EventHandler<EventArgs> rdaChanged;
-        [XmlIgnoreAttribute]
-        GPSReader gpsReader;
         [XmlIgnore]
         string _gpsReaderDeviceID;
         public string gpsReaderDeviceID {
