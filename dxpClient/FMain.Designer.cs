@@ -39,6 +39,7 @@
             this.Freq = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Mode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rda = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.loc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rafa = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.wff = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip.SuspendLayout();
@@ -51,7 +52,7 @@
             this.miSettings});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1047, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1179, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip";
             // 
@@ -77,12 +78,13 @@
             this.Freq,
             this.Mode,
             this.rda,
+            this.loc,
             this.rafa,
             this.wff});
             this.dgvQSO.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvQSO.Location = new System.Drawing.Point(0, 24);
             this.dgvQSO.Name = "dgvQSO";
-            this.dgvQSO.Size = new System.Drawing.Size(1047, 395);
+            this.dgvQSO.Size = new System.Drawing.Size(1179, 405);
             this.dgvQSO.TabIndex = 1;
             // 
             // no
@@ -133,6 +135,12 @@
             this.rda.HeaderText = "RDA";
             this.rda.Name = "rda";
             // 
+            // loc
+            // 
+            this.loc.DataPropertyName = "loc";
+            this.loc.HeaderText = "Loc";
+            this.loc.Name = "loc";
+            // 
             // rafa
             // 
             this.rafa.DataPropertyName = "rafa";
@@ -149,7 +157,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1047, 419);
+            this.ClientSize = new System.Drawing.Size(1179, 429);
             this.Controls.Add(this.dgvQSO);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
@@ -179,6 +187,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Freq;
         private System.Windows.Forms.DataGridViewTextBoxColumn Mode;
         private System.Windows.Forms.DataGridViewTextBoxColumn rda;
+        private System.Windows.Forms.DataGridViewTextBoxColumn loc;
         private System.Windows.Forms.DataGridViewTextBoxColumn rafa;
         private System.Windows.Forms.DataGridViewTextBoxColumn wff;
     }

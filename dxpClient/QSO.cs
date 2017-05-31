@@ -26,6 +26,7 @@ namespace dxpClient
         internal string _rda;
         internal string _rafa;
         internal string _wff;
+        internal string _loc;
         internal int _no;
 
         [DataMember, ProtoMember(1)]
@@ -52,6 +53,8 @@ namespace dxpClient
         public int no { get { return _no; } set { _no = value; } }
         [DataMember, ProtoMember(12)]
         public string rafa { get { return _rafa; } set { _rafa = value; } }
+        [DataMember, ProtoMember(13)]
+        public string loc { get { return _loc; } set { _loc = value; } }
 
         public string toJSON()
         {
@@ -98,7 +101,8 @@ namespace dxpClient
                 _no = no++,
                 _rda = settings.rda,
                 _rafa = settings.rafa,
-                _wff = settings.wff
+                _wff = settings.wff,
+                _loc = settings.loc
             };
         }
     }
