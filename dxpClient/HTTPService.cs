@@ -31,7 +31,7 @@ namespace dxpClient
         {
             srvURI = _srvURI;
             gpsReader = _gpsReader;
-            pingTimer = new System.Threading.Timer( obj => ping(), null, 1, Timeout.Infinite);
+            pingTimer = new System.Threading.Timer( obj => ping(), null, pingIterval, Timeout.Infinite);
             List<QSO> unsentQSOs = ProtoBufSerialization.Read<List<QSO>>(unsentFilePath);
             if (unsentQSOs != null && unsentQSOs.Count > 0)
                 Task.Run( () =>
@@ -111,7 +111,8 @@ namespace dxpClient
         public async Task ping()
         {
             System.Diagnostics.Debug.WriteLine("Ping!");
-            await post( "{\"location\": " + gpsReader.coords.toJSON()  + "}");
+            string location = gpsReader?.coords?.toJSON();
+            await post( "{\"location\": " + ( location == null || location == "" ? "null" : location )  + "}");
         }
     }
 

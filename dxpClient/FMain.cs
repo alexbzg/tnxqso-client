@@ -15,6 +15,7 @@ using SerializationNS;
 using System.Runtime.Serialization;
 using GPSReaderNS;
 using System.IO;
+using System.Diagnostics;
 
 namespace dxpClient
 {
@@ -23,7 +24,7 @@ namespace dxpClient
         UDPListener udpListener = new UDPListener();
         QSOFactory qsoFactory;
         HTTPService http;
-        GPSReader gpsReader;
+        GPSReader gpsReader = new GPSReader();
         BindingList<QSO> blQSO = new BindingList<QSO>();
         BindingSource bsQSO;
         string qsoFilePath = Application.StartupPath + "\\qso.dat";
@@ -31,6 +32,15 @@ namespace dxpClient
 
         public FMain()
         {
+#if DEBUG
+            TextWriterTraceListener[] listeners = new TextWriterTraceListener[] {
+            new TextWriterTraceListener("debug.log"),
+            new TextWriterTraceListener(Console.Out)};
+            Debug.Listeners.AddRange(listeners);
+            Trace.Listeners.AddRange(listeners);
+            Trace.AutoFlush = true;
+            Debug.AutoFlush = true;
+#endif
             config = new XmlConfigNS.XmlConfig<DXpConfig>();
             qsoFactory = new QSOFactory( config.data );
             InitializeComponent();
@@ -59,6 +69,7 @@ namespace dxpClient
                     qsoFactory.no = lastQSO.no + 1;
             }
             config.data.rafaChanged += rafaChanged;
+            gpsReader.locationChanged += locationChanged;
             startGPSReader();
             http = new HTTPService("http://73.ru/dxped/uwsgi/qso", gpsReader);
         }
@@ -69,8 +80,7 @@ namespace dxpClient
             SerialDeviceInfo port = ports.FirstOrDefault(x => x.deviceID == config.data.gpsReaderDeviceID);
             if ( port != null ) {
                 string portName = port.portName;
-                gpsReader = new GPSReader(portName);
-                gpsReader.locationChanged += locationChanged;
+                gpsReader.listenPort(portName);
             }
         }
 

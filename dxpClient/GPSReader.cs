@@ -11,6 +11,7 @@ using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Drawing;
+using SerialPortTester;
 
 namespace GPSReaderNS
 {
@@ -23,21 +24,39 @@ namespace GPSReaderNS
 
     public class Coords
     {
+        public bool valid
+        {
+            get
+            {
+                return flLng && flLat;
+            }
+        }
+        public void invalidate()
+        {
+            flLng = false;
+            flLat = false;
+        }
+        private bool flLat = false;
+        private bool flLng = false;
         private double _lat;
         private double _lng;
         public double lat { get { return _lat; } }
         public double lng { get { return _lng; } }
         internal void setLat( double value ) {
+            flLat = true;
             _lat = value;
         }
-        internal void setLng(double value) { _lng = value; }
+        internal void setLng(double value) {
+            flLng = true;
+            _lng = value;
+        }
         public override string ToString()
         {
-            return _lat.ToString() + " " + _lng.ToString();
+            return valid ? _lat.ToString() + " " + _lng.ToString() : null;
         }
         public string toJSON()
         {
-            return "[" + _lat.ToString( CultureInfo.InvariantCulture) + "," + _lng.ToString(CultureInfo.InvariantCulture) + "]";
+            return valid ? "[" + _lat.ToString( CultureInfo.InvariantCulture) + "," + _lng.ToString(CultureInfo.InvariantCulture) + "]" : null;
         }
 
     }
@@ -88,18 +107,8 @@ namespace GPSReaderNS
         volatile StringBuilder sb = new StringBuilder();
         public EventHandler<EventArgs> locationChanged;
 
-        public GPSReader(string portName)
+        public GPSReader()
         {
-            sport = new SerialPort(portName, 4800, Parity.None, 8, StopBits.One);
-            sport.DataReceived += sportDataReceived;
-            try
-            {
-                sport.Open();
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
-            }
 #if DEBUG
 #if FAKE_GPS
             NotifyIcon notifyIcon = new NotifyIcon();
@@ -131,7 +140,27 @@ namespace GPSReaderNS
 #endif
         }
 
-        private void sportDataReceived(object sender, SerialDataReceivedEventArgs e)
+        public void listenPort(string portName)
+        {
+            if (sport?.PortName != portName)
+            {
+                sport?.Close();
+                sport = new SerialPort(portName, 4800, Parity.None, 8, StopBits.One);
+                sport.DataReceived += sportDataReceived;
+                try
+                {
+                    SerialPortFixer.Execute(portName);
+                    sport.Open();
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("Error opening port " + portName + " " + e.ToString());
+                }
+            }
+        }
+
+
+            private void sportDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
 #if DEBUG
 #if FAKE_GPS
@@ -200,7 +229,7 @@ namespace GPSReaderNS
 
                     if (flLat || flLng)
                     {
-                        System.Diagnostics.Debug.WriteLine(_coords.ToString());
+                        System.Diagnostics.Debug.WriteLine("New location: " + _coords.ToString());
                         locationChanged?.Invoke(this, new EventArgs());
                     }
                 }
