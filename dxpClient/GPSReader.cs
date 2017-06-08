@@ -1,4 +1,4 @@
-﻿//#define FAKE_GPS
+﻿#define FAKE_GPS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,23 +115,14 @@ namespace GPSReaderNS
             notifyIcon.Visible = true;
             notifyIcon.Icon = SystemIcons.Hand;
             notifyIcon.ContextMenuStrip = new ContextMenuStrip();
-            foreach ( DebugCoords dc in new DebugCoords[] {
-                new DebugCoords
-                {
-                    loc = "LP04IO",
-                    lat = "6460.6076",
-                    latD = "N",
-                    lng = "4071.2153",
-                    lngD = "E"
-                }
+            foreach ( string l in new string[] {
+                "$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47"
             })
             {
-                ToolStripMenuItem mi = new ToolStripMenuItem(dc.loc);
+                ToolStripMenuItem mi = new ToolStripMenuItem(l);
                 mi.Click += delegate (object sender, EventArgs e)
                 {
-                    parseLat(dc.lat, dc.latD);
-                    parseLong(dc.lng, dc.lngD);
-                    locationChanged?.Invoke(this, new EventArgs());
+                    parse(l);
                 };
                 notifyIcon.ContextMenuStrip.Items.Add(mi);
 
@@ -187,7 +178,7 @@ namespace GPSReaderNS
         {
             int intL = d == "N" || d == "S" ? 2 : 3;
             double coord = double.Parse( n.Substring(0, intL) ) +
-                double.Parse(n.Substring(intL), NumberStyles.Any, CultureInfo.InvariantCulture) * 60 / 10000;
+                double.Parse(n.Substring(intL), NumberStyles.Any, CultureInfo.InvariantCulture) / 60;
             if (d == "S" || d == "W")
                 coord *= -1;
             return coord;
