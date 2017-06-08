@@ -183,38 +183,15 @@ namespace GPSReaderNS
             }
         }
 
-        private double[] splitDouble( double v )
+        private double parseCoord( string n, string d)
         {
-            double[] r = new double[2];
-            r[0] = Math.Truncate(v);
-            r[1] = v - r[0];
-            return r;
+            int intL = d == "N" || d == "S" ? 2 : 3;
+            double coord = double.Parse( n.Substring(0, intL) ) +
+                double.Parse(n.Substring(intL), NumberStyles.Any, CultureInfo.InvariantCulture) * 60 / 10000;
+            if (d == "S" || d == "W")
+                coord *= -1;
+            return coord;
         }
-
-        private bool parseLat( string n, string d)
-        {
-            double newLat = double.Parse(n, NumberStyles.Any, CultureInfo.InvariantCulture) / 100;
-            double signLat = newLat * (d == "N" ? 1 : -1);
-            if (signLat != _coords.lat)
-            {
-                _coords.setLat(signLat);
-                return true;
-            }
-            return false;
-        }
-
-        private bool parseLong(string n, string d)
-        {
-            double newLong = double.Parse(n, NumberStyles.Any, CultureInfo.InvariantCulture) / 100;
-            double signLong = newLong * (d == "E" ? 1 : -1);
-            if (signLong != _coords.lng)
-            {
-                _coords.setLng( signLong );
-                return true;
-            }
-            return false;
-        }
-
 
 
         private void parse(string line)
@@ -224,11 +201,13 @@ namespace GPSReaderNS
             {
                 try
                 {
-                    bool flLat = parseLat(lineArr[2], lineArr[3]);
-                    bool flLng = parseLong(lineArr[4],lineArr[5]);
+                    double nLat = parseCoord(lineArr[2], lineArr[3]);
+                    double nLng = parseCoord(lineArr[4],lineArr[5]);
 
-                    if (flLat || flLng)
+                    if (nLat != coords.lat || nLng != coords.lng)
                     {
+                        _coords.setLat(nLat);
+                        _coords.setLng(nLng);
                         System.Diagnostics.Debug.WriteLine("New location: " + _coords.ToString());
                         locationChanged?.Invoke(this, new EventArgs());
                     }
