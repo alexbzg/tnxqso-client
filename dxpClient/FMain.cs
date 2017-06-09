@@ -287,10 +287,11 @@ namespace dxpClient
             qth += (char)(65 + lat);
             lat = 10 * (lat - Math.Truncate(lat));
             lng = 10 * (lng - Math.Truncate(lng));
-/*            qth += (char)(48 + lng) + (char)(48 + lat);
-            lat = 24 * (lat - Math.Truncate(lat));
-            lng = 24 * (lng - Math.Truncate(lng));
-            qth += (char)(65 + lng) + (char)(65 + lat);*/
+            /*            qth += (char)(48 + lng) + (char)(48 + lat);
+                        lat = 24 * (lat - Math.Truncate(lat));
+                        lng = 24 * (lng - Math.Truncate(lng));
+                        qth += (char)(65 + lng) + (char)(65 + lat);*/
+            System.Diagnostics.Debug.WriteLine(qth);
             return qth;
         } // returnQth()
 
