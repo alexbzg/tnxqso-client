@@ -72,6 +72,25 @@ namespace dxpClient
             gpsReader.locationChanged += locationChanged;
             startGPSReader();
             http = new HTTPService("http://73.ru/dxped/uwsgi/qso", gpsReader);
+            http.connectionStateChanged += onHTTPConnection;
+        }
+
+        private void onHTTPConnection(object sender, EventArgs e)
+        {
+            DoInvoke(() =>
+           {
+               if (http.connected)
+               {
+                   slConnection.Text = "Connected";
+                   slConnection.ForeColor = Color.Green;
+               } 
+               else
+               {
+                   slConnection.Text = "No connection";
+                   slConnection.ForeColor = Color.Red;
+               }
+           });
+
         }
 
         private void startGPSReader()
@@ -92,6 +111,7 @@ namespace dxpClient
                 config.data.loc = newLoc;
                 config.write();
             }
+            slCoords.Text = gpsReader.coords.ToString() + " " + config.data.loc;
         }
 
         private void rafaChanged( object sender, EventArgs e)
@@ -134,6 +154,7 @@ namespace dxpClient
         {
             DoInvoke(() => {
                 blQSO.Insert(0, qso);
+                dgvQSO.FirstDisplayedScrollingRowIndex = 0;
                 dgvQSO.Refresh();
             });
         }
