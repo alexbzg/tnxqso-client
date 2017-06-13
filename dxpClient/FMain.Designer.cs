@@ -30,6 +30,7 @@
         {
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dgvQSO = new System.Windows.Forms.DataGridView();
             this.no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.myCS = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -42,18 +43,20 @@
             this.loc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rafa = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.wff = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.slConnection = new System.Windows.Forms.ToolStripStatusLabel();
             this.slCoords = new System.Windows.Forms.ToolStripStatusLabel();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQSO)).BeginInit();
-            this.statusStrip1.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.miSettings});
+            this.miSettings,
+            this.exportToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(1179, 24);
@@ -66,6 +69,13 @@
             this.miSettings.Size = new System.Drawing.Size(61, 20);
             this.miSettings.Text = "Settings";
             this.miSettings.Click += new System.EventHandler(this.miSettings_Click);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            this.exportToolStripMenuItem.Text = "Export";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
             // dgvQSO
             // 
@@ -94,7 +104,7 @@
             // no
             // 
             this.no.DataPropertyName = "no";
-            this.no.HeaderText = "no";
+            this.no.HeaderText = "Nr";
             this.no.Name = "no";
             // 
             // myCS
@@ -157,36 +167,41 @@
             this.wff.HeaderText = "WFF";
             this.wff.Name = "wff";
             // 
-            // statusStrip1
+            // statusStrip
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusStrip.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.slConnection,
             this.slCoords});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 407);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1179, 22);
-            this.statusStrip1.TabIndex = 2;
-            this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip.Location = new System.Drawing.Point(0, 403);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(1179, 26);
+            this.statusStrip.TabIndex = 2;
+            this.statusStrip.Text = "statusStrip1";
             // 
             // slConnection
             // 
             this.slConnection.ForeColor = System.Drawing.Color.Red;
             this.slConnection.Name = "slConnection";
-            this.slConnection.Size = new System.Drawing.Size(86, 17);
+            this.slConnection.Size = new System.Drawing.Size(111, 21);
             this.slConnection.Text = "No connection";
             // 
             // slCoords
             // 
             this.slCoords.Name = "slCoords";
-            this.slCoords.Size = new System.Drawing.Size(73, 17);
+            this.slCoords.Size = new System.Drawing.Size(98, 21);
             this.slCoords.Text = "No GPS data";
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
             // FMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1179, 429);
-            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.dgvQSO);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
@@ -196,8 +211,8 @@
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQSO)).EndInit();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -221,9 +236,11 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn loc;
         private System.Windows.Forms.DataGridViewTextBoxColumn rafa;
         private System.Windows.Forms.DataGridViewTextBoxColumn wff;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel slConnection;
         private System.Windows.Forms.ToolStripStatusLabel slCoords;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }
 

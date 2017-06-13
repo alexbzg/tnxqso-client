@@ -188,7 +188,18 @@ namespace dxpClient
             }
         }
 
-        
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFileDialog.ShowDialog();
+        }
+
+        private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            try
+            {
+
+            }
+        }
     }
 
     [DataContract]
