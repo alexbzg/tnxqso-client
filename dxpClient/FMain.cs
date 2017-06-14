@@ -154,9 +154,29 @@ namespace dxpClient
         {
             DoInvoke(() => {
                 blQSO.Insert(0, qso);
+                DataGridViewRow r = dgvQSO.Rows[0];
+                setRowColors(r, Color.White, Color.SteelBlue);
+                Task.Run( async () => 
+                {
+                    await Task.Delay(5000);
+                    DoInvoke(() => 
+                    {
+                        setRowColors(r, dgvQSO.DefaultCellStyle.ForeColor, dgvQSO.DefaultCellStyle.BackColor);
+                        dgvQSO.Refresh();
+                    });
+                });
                 dgvQSO.FirstDisplayedScrollingRowIndex = 0;
                 dgvQSO.Refresh();
             });
+        }
+
+        private void setRowColors( DataGridViewRow r, Color f, Color b)
+        {
+            for (int co = 0; co < dgvQSO.ColumnCount; co++)
+            {
+                r.Cells[co].Style.BackColor = b;
+                r.Cells[co].Style.ForeColor = f;
+            }
         }
 
         private void FMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -197,8 +217,20 @@ namespace dxpClient
         {
             try
             {
-
+                using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName))
+                {
+                    sw.WriteLine("Nr;My Call;Ur Call;Ur RST;My RST;Freq;Mode;RDA;RAFA;Loc;WFF");
+                    foreach (QSO qso in blQSO)
+                        sw.WriteLine(qso.no.ToString() + ";" + qso.myCS + ";" + qso.cs + ";" + qso.rcv + ";" + qso.snt + ";" + qso.freq + ";" + qso.mode + ";" + qso.rda + ";" + qso.rafa + ";" +
+                            qso.loc + ";" + qso.wff);
+                }
             }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                MessageBox.Show("Can not export to text file: " + ex.ToString(), "DXpedition", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
         }
     }
 
