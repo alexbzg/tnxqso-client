@@ -15,7 +15,7 @@ namespace dxpClient
 {
     class HTTPService
     {
-        private static int pingIterval = 60 * 1000;
+        private static int pingInterval = 60 * 1000;
         HttpClient client = new HttpClient();
         string srvURI;
         System.Threading.Timer pingTimer;
@@ -31,7 +31,7 @@ namespace dxpClient
         {
             srvURI = _srvURI;
             gpsReader = _gpsReader;
-            pingTimer = new System.Threading.Timer( obj => ping(), null, pingIterval, Timeout.Infinite);
+            pingTimer = new System.Threading.Timer( obj => ping(), null, pingInterval, pingInterval);
             List<QSO> unsentQSOs = ProtoBufSerialization.Read<List<QSO>>(unsentFilePath);
             if (unsentQSOs != null && unsentQSOs.Count > 0)
                 Task.Run( () =>
@@ -45,7 +45,6 @@ namespace dxpClient
         private async Task<bool> post(string sContent)
         {
             System.Diagnostics.Debug.WriteLine(sContent);
-            pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
             HttpContent content = new StringContent(sContent);
             bool result = false;
             try
@@ -65,7 +64,6 @@ namespace dxpClient
                     await processQueue();
                 connectionStateChanged?.Invoke(this, new EventArgs());
             }
-            pingTimer.Change(pingIterval, Timeout.Infinite);
             return result;
         }
 
