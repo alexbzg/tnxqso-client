@@ -12,6 +12,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Drawing;
 using SerialPortTester;
+using System.Net.NetworkInformation;
+using AsyncConnectionNS;
 
 namespace GPSReaderNS
 {
@@ -109,6 +111,15 @@ namespace GPSReaderNS
 
         public GPSReader()
         {
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (ni.NetworkInterfaceType.ToString().StartsWith("Wireless"))
+                {
+                    AsyncConnection gpsShare = new AsyncConnection();
+                    gpsShare.connect(ni.GetIPProperties().GatewayAddresses[0].Address.ToString(), 50000);
+                    gpsShare.lineReceived += GpsShare_lineReceived;
+                }
+            }
 #if DEBUG
 #if FAKE_GPS
             NotifyIcon notifyIcon = new NotifyIcon();
@@ -130,6 +141,16 @@ namespace GPSReaderNS
             }
 #endif
 #endif
+        }
+
+        private void GpsShare_lineReceived(object sender, LineReceivedEventArgs e)
+        {
+            if (e.line.StartsWith("$GPGGA") || e.line.StartsWith("$GNGGA"))
+            {
+                System.Diagnostics.Debug.WriteLine(e.line);
+                parse(e.line);
+            }
+
         }
 
         public void listenPort(string portName)

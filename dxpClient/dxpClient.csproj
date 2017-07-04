@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncSocket.cs" />
     <Compile Include="SerialPortTester.cs" />
     <Compile Include="FSettings.cs">
       <SubType>Form</SubType>
