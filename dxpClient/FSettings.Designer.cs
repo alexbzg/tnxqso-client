@@ -35,7 +35,10 @@
             this.tbRDA = new System.Windows.Forms.TextBox();
             this.tbWWF = new System.Windows.Forms.TextBox();
             this.cbGPSPort = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.gbGPS = new System.Windows.Forms.GroupBox();
+            this.rbGPSSerial = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.gbGPS.SuspendLayout();
             this.SuspendLayout();
             // 
             // bOK
@@ -95,27 +98,51 @@
             // cbGPSPort
             // 
             this.cbGPSPort.FormattingEnabled = true;
-            this.cbGPSPort.Location = new System.Drawing.Point(94, 119);
+            this.cbGPSPort.Location = new System.Drawing.Point(6, 52);
             this.cbGPSPort.Name = "cbGPSPort";
             this.cbGPSPort.Size = new System.Drawing.Size(162, 28);
             this.cbGPSPort.TabIndex = 8;
             // 
-            // label4
+            // gbGPS
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 122);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(76, 20);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "GPS Port";
+            this.gbGPS.Controls.Add(this.radioButton2);
+            this.gbGPS.Controls.Add(this.cbGPSPort);
+            this.gbGPS.Controls.Add(this.rbGPSSerial);
+            this.gbGPS.Location = new System.Drawing.Point(4, 110);
+            this.gbGPS.Name = "gbGPS";
+            this.gbGPS.Size = new System.Drawing.Size(252, 124);
+            this.gbGPS.TabIndex = 10;
+            this.gbGPS.TabStop = false;
+            this.gbGPS.Text = "GPS Settings";
+            // 
+            // rbGPSSerial
+            // 
+            this.rbGPSSerial.AutoSize = true;
+            this.rbGPSSerial.Location = new System.Drawing.Point(3, 22);
+            this.rbGPSSerial.Name = "rbGPSSerial";
+            this.rbGPSSerial.Size = new System.Drawing.Size(99, 24);
+            this.rbGPSSerial.TabIndex = 0;
+            this.rbGPSSerial.TabStop = true;
+            this.rbGPSSerial.Text = "Serial port";
+            this.rbGPSSerial.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(3, 86);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(154, 24);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Wireless Gateway";
+            this.radioButton2.UseVisualStyleBackColor = true;
             // 
             // FSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(268, 301);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.cbGPSPort);
+            this.Controls.Add(this.gbGPS);
             this.Controls.Add(this.tbWWF);
             this.Controls.Add(this.tbRDA);
             this.Controls.Add(this.label3);
@@ -126,6 +153,8 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "FSettings";
             this.Text = "Settings";
+            this.gbGPS.ResumeLayout(false);
+            this.gbGPS.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -140,6 +169,8 @@
         private System.Windows.Forms.TextBox tbRDA;
         private System.Windows.Forms.TextBox tbWWF;
         private System.Windows.Forms.ComboBox cbGPSPort;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.GroupBox gbGPS;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton rbGPSSerial;
     }
 }

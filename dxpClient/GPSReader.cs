@@ -103,6 +103,9 @@ namespace GPSReaderNS
         }
 
         SerialPort sport;
+        AsyncConnection gpsShare;
+        private bool listenWirelessGWFl;
+        System.Threading.Timer listenWirelessGWCheckTimer;
         private Coords _coords = new Coords();
 
         public Coords coords { get { return _coords; } }
@@ -111,15 +114,7 @@ namespace GPSReaderNS
 
         public GPSReader()
         {
-            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                if (ni.NetworkInterfaceType.ToString().StartsWith("Wireless"))
-                {
-                    AsyncConnection gpsShare = new AsyncConnection();
-                    gpsShare.connect(ni.GetIPProperties().GatewayAddresses[0].Address.ToString(), 50000);
-                    gpsShare.lineReceived += GpsShare_lineReceived;
-                }
-            }
+
 #if DEBUG
 #if FAKE_GPS
             NotifyIcon notifyIcon = new NotifyIcon();
@@ -151,6 +146,29 @@ namespace GPSReaderNS
                 parse(e.line);
             }
 
+        }
+
+        public void listenWirelessGW()
+        {
+            listenWirelessGWFl = true;
+            if ( listenWirelessGWCheckTimer == null )
+                listenWirelessGWCheckTimer = new System.Threading.Timer(obj => {
+                    if (listenWirelessGWFl && (gpsShare == null || gpsShare.connected))
+                        listenWirelessGW();
+                }, null, 1000, 1000);
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (ni.NetworkInterfaceType.ToString().StartsWith("Wireless"))
+                {
+                    GatewayIPAddressInformationCollection gws = ni.GetIPProperties().GatewayAddresses;
+                    if (gws.Count > 0)
+                    {
+                        gpsShare.connect(ni.GetIPProperties().GatewayAddresses[0].Address.ToString(), 50000, true);
+                        gpsShare.reconnect = true;
+                        gpsShare.lineReceived += GpsShare_lineReceived;
+                    }
+                }
+            }
         }
 
         public void listenPort(string portName)

@@ -250,6 +250,7 @@ namespace dxpClient
             get { return _gpsReaderDeviceID; }
             set { _gpsReaderDeviceID = value; }
         }
+        public bool gpsReaderWirelessGW;
 
         [XmlIgnore]
         Dictionary<string, string> rafaData = new Dictionary<string, string>();
