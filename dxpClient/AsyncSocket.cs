@@ -53,6 +53,7 @@ namespace AsyncConnectionNS
         private string _host;
         private int _port;
         private volatile Socket socket;
+        private volatile bool disconnecting;
 
         public event EventHandler<EventArgs> onConnected;
         public event EventHandler<DisconnectEventArgs> onDisconnected;
@@ -135,6 +136,8 @@ namespace AsyncConnectionNS
         public IAsyncResult _connect()
         {
             System.Diagnostics.Debug.WriteLine("Connecting to " + _host + ":" + _port.ToString());
+            System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+            System.Diagnostics.Debug.WriteLine(t.ToString());
             try
             {
                 // Create a TCP/IP socket.
@@ -163,6 +166,8 @@ namespace AsyncConnectionNS
         {
             if (socket == null || !socket.Connected)
             {
+                System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+                System.Diagnostics.Debug.WriteLine(t.ToString());
                 Debug.WriteLine("Async connect timeout");
                 if (socket != null)
                     socket.Close();
@@ -180,7 +185,12 @@ namespace AsyncConnectionNS
 
         private void _disconnect(bool requested)
         {
+            if (disconnecting)
+                return;
+            System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+            System.Diagnostics.Debug.WriteLine(t.ToString());
             System.Diagnostics.Debug.WriteLine("disconnect");
+            disconnecting = true;
             if (requested)
                 reconnect = false;
             if (socket != null)
@@ -196,6 +206,7 @@ namespace AsyncConnectionNS
             {
                 if (socket != null && socket.Connected)
                 {
+                    disconnecting = false;
                     socket.EndConnect(ar);
                     System.Diagnostics.Debug.WriteLine("Socket connected to " +
                         socket.RemoteEndPoint.ToString());

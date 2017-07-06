@@ -104,8 +104,8 @@ namespace GPSReaderNS
 
         SerialPort sport;
         AsyncConnection gpsShare;
-        private bool listenWirelessGWFl;
-        System.Threading.Timer listenWirelessGWCheckTimer;
+        private volatile bool listenWirelessGWFl;
+        System.Threading.Timer wirelessGWCheckTimer;
         private Coords _coords = new Coords();
 
         public Coords coords { get { return _coords; } }
@@ -150,22 +150,31 @@ namespace GPSReaderNS
 
         public void listenWirelessGW()
         {
+            sport?.Close();
             listenWirelessGWFl = true;
-            if ( listenWirelessGWCheckTimer == null )
-                listenWirelessGWCheckTimer = new System.Threading.Timer(obj => {
-                    if (listenWirelessGWFl && (gpsShare == null || gpsShare.connected))
+            if ( wirelessGWCheckTimer == null )
+                wirelessGWCheckTimer = new System.Threading.Timer(obj => {
+                    if (listenWirelessGWFl)
                         listenWirelessGW();
-                }, null, 1000, 1000);
+                }, null, 10000, 10000);
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ni.NetworkInterfaceType.ToString().StartsWith("Wireless"))
+                if (ni.NetworkInterfaceType.ToString().StartsWith("Wireless") )
                 {
                     GatewayIPAddressInformationCollection gws = ni.GetIPProperties().GatewayAddresses;
-                    if (gws.Count > 0)
+                    if (gws?.Count > 0 && ni.OperationalStatus == OperationalStatus.Up )
                     {
-                        gpsShare.connect(ni.GetIPProperties().GatewayAddresses[0].Address.ToString(), 50000, true);
-                        gpsShare.reconnect = true;
-                        gpsShare.lineReceived += GpsShare_lineReceived;
+                        if (gpsShare == null)
+                        {
+                            gpsShare = new AsyncConnection();
+                            gpsShare.connect(ni.GetIPProperties().GatewayAddresses[0].Address.ToString(), 50000, true);
+                            gpsShare.reconnect = true;
+                            gpsShare.lineReceived += GpsShare_lineReceived;
+                        }
+                    } else if (gpsShare != null)
+                    {
+                        gpsShare.disconnect();
+                        gpsShare = null;
                     }
                 }
             }
@@ -173,6 +182,12 @@ namespace GPSReaderNS
 
         public void listenPort(string portName)
         {
+            if ( listenWirelessGWFl )
+            {
+                listenWirelessGWFl = false;
+                wirelessGWCheckTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+                gpsShare?.disconnect();
+            }
             if (sport?.PortName != portName)
             {
                 sport?.Close();

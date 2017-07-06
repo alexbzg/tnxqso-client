@@ -36,8 +36,8 @@
             this.tbWWF = new System.Windows.Forms.TextBox();
             this.cbGPSPort = new System.Windows.Forms.ComboBox();
             this.gbGPS = new System.Windows.Forms.GroupBox();
+            this.rbGPSWirelessGW = new System.Windows.Forms.RadioButton();
             this.rbGPSSerial = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.gbGPS.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -98,14 +98,14 @@
             // cbGPSPort
             // 
             this.cbGPSPort.FormattingEnabled = true;
-            this.cbGPSPort.Location = new System.Drawing.Point(6, 52);
+            this.cbGPSPort.Location = new System.Drawing.Point(108, 21);
             this.cbGPSPort.Name = "cbGPSPort";
-            this.cbGPSPort.Size = new System.Drawing.Size(162, 28);
+            this.cbGPSPort.Size = new System.Drawing.Size(138, 28);
             this.cbGPSPort.TabIndex = 8;
             // 
             // gbGPS
             // 
-            this.gbGPS.Controls.Add(this.radioButton2);
+            this.gbGPS.Controls.Add(this.rbGPSWirelessGW);
             this.gbGPS.Controls.Add(this.cbGPSPort);
             this.gbGPS.Controls.Add(this.rbGPSSerial);
             this.gbGPS.Location = new System.Drawing.Point(4, 110);
@@ -114,6 +114,18 @@
             this.gbGPS.TabIndex = 10;
             this.gbGPS.TabStop = false;
             this.gbGPS.Text = "GPS Settings";
+            // 
+            // rbGPSWirelessGW
+            // 
+            this.rbGPSWirelessGW.AutoSize = true;
+            this.rbGPSWirelessGW.Location = new System.Drawing.Point(3, 63);
+            this.rbGPSWirelessGW.Name = "rbGPSWirelessGW";
+            this.rbGPSWirelessGW.Size = new System.Drawing.Size(154, 24);
+            this.rbGPSWirelessGW.TabIndex = 1;
+            this.rbGPSWirelessGW.TabStop = true;
+            this.rbGPSWirelessGW.Text = "Wireless Gateway";
+            this.rbGPSWirelessGW.UseVisualStyleBackColor = true;
+            this.rbGPSWirelessGW.Click += new System.EventHandler(this.rbGPSSource_Click);
             // 
             // rbGPSSerial
             // 
@@ -125,17 +137,7 @@
             this.rbGPSSerial.TabStop = true;
             this.rbGPSSerial.Text = "Serial port";
             this.rbGPSSerial.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(3, 86);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(154, 24);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Wireless Gateway";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.rbGPSSerial.Click += new System.EventHandler(this.rbGPSSource_Click);
             // 
             // FSettings
             // 
@@ -170,7 +172,7 @@
         private System.Windows.Forms.TextBox tbWWF;
         private System.Windows.Forms.ComboBox cbGPSPort;
         private System.Windows.Forms.GroupBox gbGPS;
-        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton rbGPSWirelessGW;
         private System.Windows.Forms.RadioButton rbGPSSerial;
     }
 }

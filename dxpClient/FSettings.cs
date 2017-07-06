@@ -17,7 +17,8 @@ namespace dxpClient
     {
         public string rda {  get { return tbRDA.Text; } }
         public string wwf { get { return tbWWF.Text; } }
-        public string gpsReaderDeviceID {  get { return serialPorts[cbGPSPort.SelectedIndex].deviceID; } }
+        public string gpsReaderDeviceID {  get { return cbGPSPort.SelectedIndex == -1 ? null : serialPorts[cbGPSPort.SelectedIndex].deviceID; } }
+        public bool gpsReaderWirelessGW { get { return rbGPSWirelessGW.Checked; } }
 
         List<SerialDeviceInfo> serialPorts = GPSReader.listSerialDevices();
 
@@ -37,7 +38,18 @@ namespace dxpClient
             int portIdx = serialPorts.FindIndex(x => x.deviceID == data.gpsReaderDeviceID);
             if (portIdx != -1)
                 cbGPSPort.SelectedIndex = portIdx;
+            rbGPSSerial.Checked = !data.gpsReaderWirelessGW;
+            rbGPSWirelessGW.Checked = data.gpsReaderWirelessGW;
+            cbGPSPort.Enabled = !data.gpsReaderWirelessGW;
             
+        }
+
+        private void rbGPSSource_Click(object sender, EventArgs e)
+        {
+            RadioButton s = (RadioButton)sender;
+            foreach (RadioButton rb in new RadioButton[] { rbGPSSerial, rbGPSWirelessGW })
+                rb.Checked = rb == s;
+            cbGPSPort.Enabled = rbGPSSerial.Checked;
         }
     }
 }

@@ -95,11 +95,17 @@ namespace dxpClient
 
         private void startGPSReader()
         {
-            List<SerialDeviceInfo> ports = GPSReader.listSerialDevices();
-            SerialDeviceInfo port = ports.FirstOrDefault(x => x.deviceID == config.data.gpsReaderDeviceID);
-            if ( port != null ) {
-                string portName = port.portName;
-                gpsReader.listenPort(portName);
+            if (config.data.gpsReaderWirelessGW)
+                gpsReader.listenWirelessGW();
+            else
+            {
+                List<SerialDeviceInfo> ports = GPSReader.listSerialDevices();
+                SerialDeviceInfo port = ports.FirstOrDefault(x => x.deviceID == config.data.gpsReaderDeviceID);
+                if (port != null)
+                {
+                    string portName = port.portName;
+                    gpsReader.listenPort(portName);
+                }
             }
         }
 
@@ -198,9 +204,10 @@ namespace dxpClient
             if ( fs.ShowDialog(this) == DialogResult.OK )
             {
                 config.data.rda = fs.rda;
-                config.data.wff = fs.wwf;
-                if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID)
+                config.data.wff = fs.wwf;                
+                if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsReaderWirelessGW != fs.gpsReaderWirelessGW)
                 {
+                    config.data.gpsReaderWirelessGW = fs.gpsReaderWirelessGW;
                     config.data.gpsReaderDeviceID = fs.gpsReaderDeviceID;
                     startGPSReader();
                 }
