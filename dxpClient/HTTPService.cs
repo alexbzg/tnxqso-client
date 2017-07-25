@@ -23,6 +23,7 @@ namespace dxpClient
         private string unsentFilePath = Application.StartupPath + "\\unsent.dat";
         private volatile bool _connected;
         public bool connected {  get { return _connected; } }
+        public string loc = null;
         public EventHandler<EventArgs> connectionStateChanged;
         private GPSReader gpsReader;
 
@@ -106,11 +107,16 @@ namespace dxpClient
             }
         }
 
+        private static string stringJSONfield(string val)
+        {
+            return val == null || val == "" ? "null" : val;
+        }
+
         public async Task ping()
         {
             System.Diagnostics.Debug.WriteLine("Ping!");
-            string location = gpsReader?.coords?.toJSON();
-            await post( "{\"location\": " + ( location == null || location == "" ? "null" : location )  + "}");
+            await post( "{\"location\": " + stringJSONfield( gpsReader?.coords?.toJSON() )  + ", " +
+                "\"loc\": \"" + stringJSONfield( loc ) + "\"}");
         }
     }
 

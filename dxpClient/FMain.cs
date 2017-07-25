@@ -118,6 +118,8 @@ namespace dxpClient
                 config.write();
             }
             slCoords.Text = gpsReader.coords.ToString() + " " + config.data.loc;
+            if (http != null )
+                http.loc = newLoc;
         }
 
         private void rafaChanged( object sender, EventArgs e)
