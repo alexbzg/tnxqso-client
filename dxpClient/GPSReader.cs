@@ -123,7 +123,7 @@ namespace GPSReaderNS
             notifyIcon.ContextMenuStrip = new ContextMenuStrip();
             foreach ( string l in new string[] {
                 "$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47",
-                "$GPGGA,123519,4507.490,N,03900.4874,E,1,08,0.9,545.4,M,46.9,M,,*47"
+                "$GPGGA,123519,4507.000,N,03856.000,E,1,08,0.9,545.4,M,46.9,M,,*47"
             })
             {
                 ToolStripMenuItem mi = new ToolStripMenuItem(l);

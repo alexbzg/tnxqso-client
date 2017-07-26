@@ -23,15 +23,16 @@ namespace dxpClient
         private string unsentFilePath = Application.StartupPath + "\\unsent.dat";
         private volatile bool _connected;
         public bool connected {  get { return _connected; } }
-        public string loc = null;
         public EventHandler<EventArgs> connectionStateChanged;
         private GPSReader gpsReader;
+        private DXpConfig config;
 
 
-        public HTTPService( string _srvURI, GPSReader _gpsReader )
+        public HTTPService( string _srvURI, GPSReader _gpsReader, DXpConfig _config )
         {
             srvURI = _srvURI;
             gpsReader = _gpsReader;
+            config = _config;
             pingTimer = new System.Threading.Timer( obj => ping(), null, pingInterval, pingInterval);
             List<QSO> unsentQSOs = ProtoBufSerialization.Read<List<QSO>>(unsentFilePath);
             if (unsentQSOs != null && unsentQSOs.Count > 0)
@@ -109,14 +110,20 @@ namespace dxpClient
 
         private static string stringJSONfield(string val)
         {
+            return val == null || val == "" ? "null" : "\"" + val + "\"";
+        }
+
+        private static string JSONfield( string val )
+        {
             return val == null || val == "" ? "null" : val;
         }
 
         public async Task ping()
         {
             System.Diagnostics.Debug.WriteLine("Ping!");
-            await post( "{\"location\": " + stringJSONfield( gpsReader?.coords?.toJSON() )  + ", " +
-                "\"loc\": \"" + stringJSONfield( loc ) + "\"}");
+            await post( "{\"location\": " + JSONfield( gpsReader?.coords?.toJSON() )  + ", " +
+                "\"loc\": " + stringJSONfield( config.loc ) + ", " +
+                "\"rafa\": " + stringJSONfield( config.rafa ) + "}" );
         }
     }
 

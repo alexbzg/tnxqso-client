@@ -71,7 +71,7 @@ namespace dxpClient
             config.data.rafaChanged += rafaChanged;
             gpsReader.locationChanged += locationChanged;
             startGPSReader();
-            http = new HTTPService("http://73.ru/dxped/uwsgi/qso", gpsReader);
+            http = new HTTPService("http://73.ru/dxped/uwsgi/qso", gpsReader, config.data);
             http.connectionStateChanged += onHTTPConnection;
         }
 
@@ -117,9 +117,10 @@ namespace dxpClient
                 config.data.loc = newLoc;
                 config.write();
             }
-            slCoords.Text = gpsReader.coords.ToString() + " " + config.data.loc;
-            if (http != null )
-                http.loc = newLoc;
+            slCoords.Text = gpsReader.coords.ToString();
+            slLoc.Text = config.data.loc;
+            if (config.data.rafa != null)
+                slLoc.Text += " RAFA " + config.data.rafa;
         }
 
         private void rafaChanged( object sender, EventArgs e)

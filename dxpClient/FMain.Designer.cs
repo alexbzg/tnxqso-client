@@ -32,10 +32,6 @@
             this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dgvQSO = new System.Windows.Forms.DataGridView();
-            this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.slConnection = new System.Windows.Forms.ToolStripStatusLabel();
-            this.slCoords = new System.Windows.Forms.ToolStripStatusLabel();
-            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ts = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.myCS = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -48,6 +44,11 @@
             this.loc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rafa = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.wff = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.slConnection = new System.Windows.Forms.ToolStripStatusLabel();
+            this.slCoords = new System.Windows.Forms.ToolStripStatusLabel();
+            this.slLoc = new System.Windows.Forms.ToolStripStatusLabel();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQSO)).BeginInit();
             this.statusStrip.SuspendLayout();
@@ -102,35 +103,6 @@
             this.dgvQSO.Name = "dgvQSO";
             this.dgvQSO.Size = new System.Drawing.Size(1179, 405);
             this.dgvQSO.TabIndex = 1;
-            // 
-            // statusStrip
-            // 
-            this.statusStrip.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.slConnection,
-            this.slCoords});
-            this.statusStrip.Location = new System.Drawing.Point(0, 403);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1179, 26);
-            this.statusStrip.TabIndex = 2;
-            this.statusStrip.Text = "statusStrip1";
-            // 
-            // slConnection
-            // 
-            this.slConnection.ForeColor = System.Drawing.Color.Red;
-            this.slConnection.Name = "slConnection";
-            this.slConnection.Size = new System.Drawing.Size(111, 21);
-            this.slConnection.Text = "No connection";
-            // 
-            // slCoords
-            // 
-            this.slCoords.Name = "slCoords";
-            this.slCoords.Size = new System.Drawing.Size(98, 21);
-            this.slCoords.Text = "No GPS data";
-            // 
-            // saveFileDialog
-            // 
-            this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
             // no
             // 
@@ -204,6 +176,42 @@
             this.wff.HeaderText = "WFF";
             this.wff.Name = "wff";
             // 
+            // statusStrip
+            // 
+            this.statusStrip.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.slConnection,
+            this.slCoords,
+            this.slLoc});
+            this.statusStrip.Location = new System.Drawing.Point(0, 403);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(1179, 26);
+            this.statusStrip.TabIndex = 2;
+            this.statusStrip.Text = "statusStrip1";
+            // 
+            // slConnection
+            // 
+            this.slConnection.ForeColor = System.Drawing.Color.Red;
+            this.slConnection.Name = "slConnection";
+            this.slConnection.Size = new System.Drawing.Size(111, 21);
+            this.slConnection.Text = "No connection";
+            // 
+            // slCoords
+            // 
+            this.slCoords.Name = "slCoords";
+            this.slCoords.Size = new System.Drawing.Size(98, 21);
+            this.slCoords.Text = "No GPS data";
+            // 
+            // slLoc
+            // 
+            this.slLoc.ForeColor = System.Drawing.Color.Red;
+            this.slLoc.Name = "slLoc";
+            this.slLoc.Size = new System.Drawing.Size(0, 21);
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
+            // 
             // FMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -250,6 +258,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn loc;
         private System.Windows.Forms.DataGridViewTextBoxColumn rafa;
         private System.Windows.Forms.DataGridViewTextBoxColumn wff;
+        private System.Windows.Forms.ToolStripStatusLabel slLoc;
     }
 }
 
