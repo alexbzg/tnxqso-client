@@ -9,6 +9,7 @@ using System.IO;
 using System.Xml;
 using ProtoBuf;
 using SerializationNS;
+using System.Globalization;
 
 namespace dxpClient
 {
@@ -60,6 +61,11 @@ namespace dxpClient
         {
             return JSONSerializer.Serialize<QSO>(this);
         }
+
+        public static string formatFreq(string freq)
+        {
+            return (Convert.ToDouble(Convert.ToInt32(freq)) / 100).ToString("0.00", System.Globalization.NumberFormatInfo.InvariantInfo);
+        }
     }
 
     public class QSOFactory
@@ -80,6 +86,7 @@ namespace dxpClient
             no = 1;
         }
 
+
         public QSO create( string xml )
         {
             XmlDocument doc = new XmlDocument();
@@ -93,7 +100,7 @@ namespace dxpClient
                 _ts = root.SelectSingleNode("timestamp").InnerText,
                 _myCS = root.SelectSingleNode("mycall").InnerText,
                 _band = root.SelectSingleNode("band").InnerText,
-                _freq = root.SelectSingleNode("txfreq").InnerText,
+                _freq = QSO.formatFreq(root.SelectSingleNode("txfreq").InnerText ),
                 _mode = root.SelectSingleNode("mode").InnerText,
                 _cs = root.SelectSingleNode("call").InnerText,
                 _snt = root.SelectSingleNode("snt").InnerText,

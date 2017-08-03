@@ -59,15 +59,25 @@ namespace dxpClient
                     config.data.dgvQSOColumnsWidth[co] = dgvQSO.Columns[co].Width;
                 config.write();
             }
-            List<QSO> storedQSOs = ProtoBufSerialization.ReadList<QSO>(qsoFilePath);
+            bool qsoEr;
+            List<QSO> storedQSOs = ProtoBufSerialization.ReadListItems<QSO>(qsoFilePath, out qsoEr);
             if (storedQSOs.Count > 0)
             {
                 foreach (QSO qso in storedQSOs)
-                    dgvQSOInsert(qso);
+                {
+                    if (qso.freq.IndexOf('.') == -1)
+                    {
+                        qso.freq = QSO.formatFreq(qso.freq);
+                        qsoEr = true;
+                    }
+                    blQSO.Insert(0, qso);
+                }
                 QSO lastQSO = storedQSOs.Last();
                 if (lastQSO.rda == config.data.rda)
                     qsoFactory.no = lastQSO.no + 1;
             }
+            if (qsoEr)
+                ProtoBufSerialization.WriteList(qsoFilePath, storedQSOs, false);
             config.data.rafaChanged += rafaChanged;
             gpsReader.locationChanged += locationChanged;
             startGPSReader();
@@ -241,6 +251,12 @@ namespace dxpClient
                 MessageBox.Show("Can not export to text file: " + ex.ToString(), "DXpedition", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+        }
+
+        private void FMain_Load(object sender, EventArgs e)
+        {
+            dgvQSO.FirstDisplayedScrollingRowIndex = 0;
+            dgvQSO.Refresh();
         }
     }
 

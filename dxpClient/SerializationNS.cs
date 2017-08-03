@@ -69,6 +69,24 @@ namespace SerializationNS
             }
         }
 
+        public static void WriteList<T>(string filePath, List<T> list, bool append = false)
+        {
+            try
+            {
+                using (FileStream file = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
+                {
+                    foreach ( T o in list )
+                        Serializer.SerializeWithLengthPrefix(file, o,
+                            PrefixStyle.Base128, Serializer.ListItemTag);
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
+        }
+
+
         public static T Read<T>(string filePath)
         {
             try
@@ -107,6 +125,43 @@ namespace SerializationNS
             }
             catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
+            return r;
+        }
+
+        public static List<T> ReadListItems<T>(string filePath, out bool er)
+        {
+            List<T> r = new List<T>();
+            er = false;
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    using (FileStream file = File.OpenRead(filePath))
+                    {
+                        T o;
+                        while (file.Position != file.Length) {
+                            try
+                            {
+                                o = Serializer.DeserializeWithLengthPrefix<T>(file, PrefixStyle.Base128, Serializer.ListItemTag);
+                                r.Add(o);
+                            }
+                            catch (Exception e)
+                            {
+                                System.Diagnostics.Debug.WriteLine(e.ToString());
+                                er = true;
+                                /*file.Position += recLength;
+                                recLength = 1;*/
+                            }
+
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
                 System.Diagnostics.Debug.WriteLine(e.ToString());
             }
             return r;

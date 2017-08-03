@@ -224,6 +224,7 @@
             this.Name = "FMain";
             this.Text = "DXpedition";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FMain_FormClosing);
+            this.Load += new System.EventHandler(this.FMain_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQSO)).EndInit();
