@@ -66,6 +66,35 @@ namespace dxpClient
         {
             return (Convert.ToDouble(Convert.ToInt32(freq)) / 100).ToString("0.00", System.Globalization.NumberFormatInfo.InvariantInfo);
         }
+
+        public static string adifField( string name, string value )
+        {
+            return "<" + name + ":" +  
+                ( value == null ? "0>" : value.Length.ToString() + ">" + value ) + 
+                " ";
+        }
+
+        public string adif()
+        {
+            string[] dt = ts.Split(' ');           
+            return
+                adifField("CALL", cs) +
+                adifField("QSO_DATE", dt[0].Replace( "-", "" ) ) +
+                adifField("TIME_ON", dt[1].Replace( ":", "" ) ) +
+                adifField("BAND", band) +
+                adifField("STATION_CALLSIGN", myCS) +
+                adifField("FREQ", freq) +
+                adifField("FREQ_RX", freq) +
+                adifField("MODE", mode) +
+                adifField("RST_RCVD", rcv) +
+                adifField("RST_SENT", snt) +
+                adifField("OPERATOR", myCS) + 
+                adifField("GRIDSQUARE", loc) +
+                adifField("RDA",rda) +
+                adifField("RAFA",rafa) +
+                adifField("WFF",wff) +
+                " <EOR>";
+        }
     }
 
     public class QSOFactory

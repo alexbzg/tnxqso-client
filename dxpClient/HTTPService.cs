@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define DISABLE_HTTP
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,11 @@ namespace dxpClient
         private async Task<bool> post(string sContent)
         {
             System.Diagnostics.Debug.WriteLine(sContent);
+#if DEBUG
+#if DISABLE_HTTP
+            return true;
+#endif
+#endif
             HttpContent content = new StringContent(sContent);
             bool result = false;
             try

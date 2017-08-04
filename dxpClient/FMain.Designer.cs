@@ -103,6 +103,7 @@
             this.dgvQSO.Name = "dgvQSO";
             this.dgvQSO.Size = new System.Drawing.Size(1179, 405);
             this.dgvQSO.TabIndex = 1;
+            this.dgvQSO.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DgvQSO_ColumnWidthChanged);
             // 
             // no
             // 

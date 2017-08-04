@@ -239,10 +239,17 @@ namespace dxpClient
             {
                 using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName))
                 {
+                    /*
                     sw.WriteLine("Nr;My Call;Ur Call;Ur RST;My RST;Freq;Mode;RDA;RAFA;Loc;WFF");
                     foreach (QSO qso in blQSO)
                         sw.WriteLine(qso.no.ToString() + ";" + qso.myCS + ";" + qso.cs + ";" + qso.rcv + ";" + qso.snt + ";" + qso.freq + ";" + qso.mode + ";" + qso.rda + ";" + qso.rafa + ";" +
                             qso.loc + ";" + qso.wff);
+                            */
+                    sw.WriteLine("<EOH>");
+                    foreach (QSO qso in blQSO)
+                        sw.WriteLine(qso.adif());
+
+
                 }
             }
             catch (Exception ex)
