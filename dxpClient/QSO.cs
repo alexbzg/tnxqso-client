@@ -28,6 +28,8 @@ namespace dxpClient
         internal string _rafa;
         internal string _wff;
         internal string _loc;
+        internal string _freqRx;
+        internal string _oper;
         internal int _no;
 
         [DataMember, ProtoMember(1)]
@@ -56,6 +58,8 @@ namespace dxpClient
         public string rafa { get { return _rafa; } set { _rafa = value; } }
         [DataMember, ProtoMember(13)]
         public string loc { get { return _loc; } set { _loc = value; } }
+        public string freqRx { get { return _freqRx == null ? _freq : _freqRx; } set { _freqRx = value; } }
+        public string oper { get { return _oper == null ? _myCS : _oper; } set { _oper = value; } }
 
         public string toJSON()
         {
@@ -84,11 +88,11 @@ namespace dxpClient
                 adifField("BAND", band) +
                 adifField("STATION_CALLSIGN", myCS) +
                 adifField("FREQ", freq) +
-                adifField("FREQ_RX", freq) +
+                adifField("FREQ_RX", freqRx) +
                 adifField("MODE", mode) +
                 adifField("RST_RCVD", rcv) +
                 adifField("RST_SENT", snt) +
-                adifField("OPERATOR", myCS) + 
+                adifField("OPERATOR", oper) + 
                 adifField("GRIDSQUARE", loc) +
                 adifField("RDA",rda) +
                 adifField("RAFA",rafa) +
@@ -134,6 +138,8 @@ namespace dxpClient
                 _cs = root.SelectSingleNode("call").InnerText,
                 _snt = root.SelectSingleNode("snt").InnerText,
                 _rcv = root.SelectSingleNode("rcv").InnerText,
+                _freqRx = QSO.formatFreq(root.SelectSingleNode("rxfreq").InnerText),
+                _oper = root.SelectSingleNode("operator").InnerText,
                 _no = no++,
                 _rda = settings.rda,
                 _rafa = settings.rafa,
