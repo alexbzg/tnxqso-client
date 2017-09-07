@@ -126,10 +126,10 @@ namespace dxpClient
 
         public async Task ping()
         {
-            System.Diagnostics.Debug.WriteLine("Ping!");
-            await post( "{\"location\": " + JSONfield( gpsReader?.coords?.toJSON() )  + ", " +
+            bool response  = await post( "{\"location\": " + JSONfield( gpsReader?.coords?.toJSON() )  + ", " +
                 "\"loc\": " + stringJSONfield( config.loc ) + ", " +
                 "\"rafa\": " + stringJSONfield( config.rafa ) + "}" );
+            pingTimer.Change( response ? pingInterval : 1000, pingInterval);
         }
     }
 
