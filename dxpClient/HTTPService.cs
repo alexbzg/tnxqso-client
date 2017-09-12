@@ -34,7 +34,7 @@ namespace dxpClient
             srvURI = _srvURI;
             gpsReader = _gpsReader;
             config = _config;
-            pingTimer = new System.Threading.Timer( obj => ping(), null, pingInterval, pingInterval);
+            pingTimer = new System.Threading.Timer( obj => ping(), null, 5000, pingInterval);
             List<QSO> unsentQSOs = ProtoBufSerialization.Read<List<QSO>>(unsentFilePath);
             if (unsentQSOs != null && unsentQSOs.Count > 0)
                 Task.Run( () =>

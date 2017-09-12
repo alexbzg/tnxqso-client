@@ -265,8 +265,11 @@ namespace dxpClient
 
         private void FMain_Load(object sender, EventArgs e)
         {
-            dgvQSO.FirstDisplayedScrollingRowIndex = 0;
-            dgvQSO.Refresh();
+            if (blQSO.Count > 0)
+            {
+                dgvQSO.FirstDisplayedScrollingRowIndex = 0;
+                dgvQSO.Refresh();
+            }
         }
     }
 
