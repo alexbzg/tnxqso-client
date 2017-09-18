@@ -271,6 +271,18 @@ namespace dxpClient
                 dgvQSO.Refresh();
             }
         }
+
+        private void tbCSFilter_TextChanged(object sender, EventArgs e)
+        {
+            dgvQSO.ClearSelection();
+            dgvQSO.CurrentCell = null;
+            if (tbCSFilter.Text == "")
+                for (int c = 0; c < dgvQSO.RowCount; c++)
+                    dgvQSO.Rows[c].Visible = true;
+            else
+                for (int c = 0; c < dgvQSO.RowCount; c++)
+                    dgvQSO.Rows[c].Visible = blQSO[c].cs.Contains(tbCSFilter.Text);
+        }
     }
 
     [DataContract]

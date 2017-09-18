@@ -31,6 +31,7 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tbCSFilter = new System.Windows.Forms.ToolStripTextBox();
             this.dgvQSO = new System.Windows.Forms.DataGridView();
             this.no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ts = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -58,26 +59,35 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miSettings,
-            this.exportToolStripMenuItem});
+            this.exportToolStripMenuItem,
+            this.tbCSFilter});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1179, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1179, 27);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip";
             // 
             // miSettings
             // 
             this.miSettings.Name = "miSettings";
-            this.miSettings.Size = new System.Drawing.Size(61, 20);
+            this.miSettings.Size = new System.Drawing.Size(61, 23);
             this.miSettings.Text = "Settings";
             this.miSettings.Click += new System.EventHandler(this.miSettings_Click);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(52, 23);
             this.exportToolStripMenuItem.Text = "Export";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
+            // 
+            // tbCSFilter
+            // 
+            this.tbCSFilter.AutoToolTip = true;
+            this.tbCSFilter.Name = "tbCSFilter";
+            this.tbCSFilter.Size = new System.Drawing.Size(100, 23);
+            this.tbCSFilter.ToolTipText = "Callsign filter";
+            this.tbCSFilter.TextChanged += new System.EventHandler(this.tbCSFilter_TextChanged);
             // 
             // dgvQSO
             // 
@@ -99,9 +109,9 @@
             this.rafa,
             this.wff});
             this.dgvQSO.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvQSO.Location = new System.Drawing.Point(0, 24);
+            this.dgvQSO.Location = new System.Drawing.Point(0, 27);
             this.dgvQSO.Name = "dgvQSO";
-            this.dgvQSO.Size = new System.Drawing.Size(1179, 405);
+            this.dgvQSO.Size = new System.Drawing.Size(1179, 402);
             this.dgvQSO.TabIndex = 1;
             this.dgvQSO.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DgvQSO_ColumnWidthChanged);
             // 
@@ -261,6 +271,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn rafa;
         private System.Windows.Forms.DataGridViewTextBoxColumn wff;
         private System.Windows.Forms.ToolStripStatusLabel slLoc;
+        private System.Windows.Forms.ToolStripTextBox tbCSFilter;
     }
 }
 
