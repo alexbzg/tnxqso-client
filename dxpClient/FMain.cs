@@ -276,12 +276,9 @@ namespace dxpClient
         {
             dgvQSO.ClearSelection();
             dgvQSO.CurrentCell = null;
-            if (tbCSFilter.Text == "")
-                for (int c = 0; c < dgvQSO.RowCount; c++)
-                    dgvQSO.Rows[c].Visible = true;
-            else
-                for (int c = 0; c < dgvQSO.RowCount; c++)
-                    dgvQSO.Rows[c].Visible = blQSO[c].cs.Contains(tbCSFilter.Text);
+            for (int c = 0; c < dgvQSO.RowCount; c++)
+                dgvQSO.Rows[c].Visible = tbCSFilter.Text == "" ? 
+                    true : blQSO[c].cs.Contains(tbCSFilter.Text);
         }
     }
 
