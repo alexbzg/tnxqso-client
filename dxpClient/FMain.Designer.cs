@@ -1,4 +1,6 @@
-﻿namespace dxpClient
+﻿using System;
+
+namespace dxpClient
 {
     partial class FMain
     {
@@ -32,6 +34,7 @@
             this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tbCSFilter = new System.Windows.Forms.ToolStripTextBox();
+            this.miFilter = new System.Windows.Forms.ToolStripMenuItem();
             this.dgvQSO = new System.Windows.Forms.DataGridView();
             this.no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ts = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -60,7 +63,8 @@
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miSettings,
             this.exportToolStripMenuItem,
-            this.tbCSFilter});
+            this.tbCSFilter,
+            this.miFilter});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(1179, 27);
@@ -87,7 +91,14 @@
             this.tbCSFilter.Name = "tbCSFilter";
             this.tbCSFilter.Size = new System.Drawing.Size(100, 23);
             this.tbCSFilter.ToolTipText = "Callsign filter";
-            this.tbCSFilter.TextChanged += new System.EventHandler(this.tbCSFilter_TextChanged);
+            // 
+            // miFilter
+            // 
+            this.miFilter.CheckOnClick = true;
+            this.miFilter.Name = "miFilter";
+            this.miFilter.Size = new System.Drawing.Size(45, 23);
+            this.miFilter.Text = "Filter";
+            this.miFilter.Click += new System.EventHandler(this.tbCSFilter_TextChanged);
             // 
             // dgvQSO
             // 
@@ -246,7 +257,6 @@
 
         }
 
-        
 
         #endregion
 
@@ -272,6 +282,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn wff;
         private System.Windows.Forms.ToolStripStatusLabel slLoc;
         private System.Windows.Forms.ToolStripTextBox tbCSFilter;
+        private System.Windows.Forms.ToolStripMenuItem miFilter;
     }
 }
 

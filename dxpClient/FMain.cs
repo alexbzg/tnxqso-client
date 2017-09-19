@@ -26,6 +26,7 @@ namespace dxpClient
         HTTPService http;
         GPSReader gpsReader = new GPSReader();
         BindingList<QSO> blQSO = new BindingList<QSO>();
+        Dictionary<string, BindingList<QSO>> qsoIndex = new Dictionary<string, BindingList<QSO>>();
         BindingSource bsQSO;
         string qsoFilePath = Application.StartupPath + "\\qso.dat";
 
@@ -71,6 +72,7 @@ namespace dxpClient
                         qsoEr = true;
                     }
                     blQSO.Insert(0, qso);
+                    updateQsoIndex(qso);
                 }
                 QSO lastQSO = storedQSOs.Last();
                 if (lastQSO.rda == config.data.rda)
@@ -83,6 +85,13 @@ namespace dxpClient
             startGPSReader();
             http = new HTTPService("http://73.ru/dxped/uwsgi/qso", gpsReader, config.data);
             http.connectionStateChanged += onHTTPConnection;
+        }
+
+        private void updateQsoIndex( QSO qso )
+        {
+            if (!qsoIndex.ContainsKey(qso.cs))
+                qsoIndex[qso.cs] = new BindingList<QSO>();
+            qsoIndex[qso.cs].Insert(0, qso);
         }
 
         private void onHTTPConnection(object sender, EventArgs e)
@@ -173,6 +182,7 @@ namespace dxpClient
         {
             DoInvoke(() => {
                 blQSO.Insert(0, qso);
+                updateQsoIndex(qso);
                 DataGridViewRow r = dgvQSO.Rows[0];
                 setRowColors(r, Color.White, Color.SteelBlue);
                 Task.Run( async () => 
@@ -274,11 +284,20 @@ namespace dxpClient
 
         private void tbCSFilter_TextChanged(object sender, EventArgs e)
         {
-            dgvQSO.ClearSelection();
-            dgvQSO.CurrentCell = null;
-            for (int c = 0; c < dgvQSO.RowCount; c++)
-                dgvQSO.Rows[c].Visible = tbCSFilter.Text == "" ? 
-                    true : blQSO[c].cs.Contains(tbCSFilter.Text);
+            if (tbCSFilter.Text != "")
+                tbCSFilter.Text = tbCSFilter.Text.ToUpper();
+            if (miFilter.Checked && tbCSFilter.Text != "")
+            {
+                if (qsoIndex.ContainsKey(tbCSFilter.Text))
+                    bsQSO.DataSource = qsoIndex[tbCSFilter.Text];
+                else
+                    MessageBox.Show("Callsign not found!");
+            }
+            else if (!miFilter.Checked)
+                bsQSO.DataSource = blQSO;
+            else
+                miFilter.Checked = false;
+            miFilter.BackColor = miFilter.Checked ? SystemColors.MenuHighlight : DefaultBackColor;
         }
     }
 
