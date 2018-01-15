@@ -1,4 +1,4 @@
-﻿namespace dxpClient
+﻿namespace tnxqsoClient
 {
     partial class FSettings
     {

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dxpClient", "dxpClient\dxpClient.csproj", "{9F1DC4FF-71A0-4F37-B473-778C4F377714}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tnxqsoClient", "dxpClient\tnxqsoClient.csproj", "{9F1DC4FF-71A0-4F37-B473-778C4F377714}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

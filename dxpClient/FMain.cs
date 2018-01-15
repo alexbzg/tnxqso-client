@@ -17,7 +17,7 @@ using GPSReaderNS;
 using System.IO;
 using System.Diagnostics;
 
-namespace dxpClient
+namespace tnxqsoClient
 {
     public partial class FMain : FormWStorableState<DXpConfig>
     {

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GPSReaderNS;
 
-namespace dxpClient
+namespace tnxqsoClient
 {
     public partial class FSettings : Form
     {

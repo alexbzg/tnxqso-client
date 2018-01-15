@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dxpClient
+namespace tnxqsoClient
 {
     partial class FMain
     {

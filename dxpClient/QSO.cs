@@ -11,7 +11,7 @@ using ProtoBuf;
 using SerializationNS;
 using System.Globalization;
 
-namespace dxpClient
+namespace tnxqsoClient
 {
     [DataContract, ProtoContract]
     public class QSO

@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using SerializationNS;
 using GPSReaderNS;
 
-namespace dxpClient
+namespace tnxqsoClient
 {
     class HTTPService
     {
