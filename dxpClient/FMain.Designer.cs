@@ -105,6 +105,9 @@ namespace dxpClient
             this.dgvQSO.AllowUserToAddRows = false;
             this.dgvQSO.AllowUserToDeleteRows = false;
             this.dgvQSO.AllowUserToResizeRows = false;
+            this.dgvQSO.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvQSO.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvQSO.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.no,
@@ -119,10 +122,9 @@ namespace dxpClient
             this.loc,
             this.rafa,
             this.wff});
-            this.dgvQSO.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvQSO.Location = new System.Drawing.Point(0, 27);
             this.dgvQSO.Name = "dgvQSO";
-            this.dgvQSO.Size = new System.Drawing.Size(1179, 402);
+            this.dgvQSO.Size = new System.Drawing.Size(1179, 374);
             this.dgvQSO.TabIndex = 1;
             this.dgvQSO.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DgvQSO_ColumnWidthChanged);
             // 
