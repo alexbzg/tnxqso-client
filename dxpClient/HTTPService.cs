@@ -11,6 +11,7 @@ using XmlConfigNS;
 using System.Windows.Forms;
 using SerializationNS;
 using GPSReaderNS;
+using System.Runtime.Serialization.Json;
 
 namespace tnxqsoClient
 {
@@ -45,7 +46,7 @@ namespace tnxqsoClient
                 });
         }
 
-        private async Task<bool> post(string sContent)
+        private async Task<HttpContent> post(string sContent)
         {
             System.Diagnostics.Debug.WriteLine(sContent);
 #if DEBUG
@@ -54,10 +55,11 @@ namespace tnxqsoClient
 #endif
 #endif
             HttpContent content = new StringContent(sContent);
+            HttpResponseMessage response = null;
             bool result = false;
             try
             {
-                HttpResponseMessage response = await client.PostAsync(srvURI, content);
+                response = await client.PostAsync(srvURI, content);
                 result = response.IsSuccessStatusCode;
                 System.Diagnostics.Debug.WriteLine(response.ToString());
             }
@@ -72,15 +74,15 @@ namespace tnxqsoClient
                     await processQueue();
                 connectionStateChanged?.Invoke(this, new EventArgs());
             }
-            return result;
+            return result ? response.Content : null;
         }
 
         public async Task postQso( QSO qso)
         {
             if (qsoQueue.IsEmpty)
             {
-                bool response = await post(qso.toJSON());
-                if (!response)
+                HttpContent response = await post(qso.toJSON());
+                if (response != null)
                     addToQueue(qso);
             }
             else
@@ -103,8 +105,8 @@ namespace tnxqsoClient
             while (!qsoQueue.IsEmpty)
             {
                 qsoQueue.TryPeek(out QSO qso);
-                bool r = await post(qso.toJSON());
-                if (r)
+                HttpContent r = await post(qso.toJSON());
+                if (r != null)
                 {
                     qsoQueue.TryDequeue(out qso);
                     saveUnsent();
@@ -126,11 +128,29 @@ namespace tnxqsoClient
 
         public async Task ping()
         {
-            bool response  = await post( "{\"location\": " + JSONfield( gpsReader?.coords?.toJSON() )  + ", " +
+            HttpContent response  = await post( "{\"location\": " + JSONfield( gpsReader?.coords?.toJSON() )  + ", " +
                 "\"loc\": " + stringJSONfield( config.loc ) + ", " +
                 "\"rafa\": " + stringJSONfield( config.rafa ) + "}" );
-            pingTimer.Change( response ? pingInterval : 1000, pingInterval);
+            pingTimer.Change( response != null ? pingInterval : 1000, pingInterval);
         }
+
+        public async Task<LoginResponse> login(string login, string password)
+        {
+            HttpContent response = await post("{\"login\": \"" + login + "\", " + "\"password\": \"" + password + "\"}");
+            if (response != null)
+            {
+                var serializer = new DataContractJsonSerializer(typeof(LoginResponse));
+                var userData = (LoginResponse)serializer.ReadObject(await response.ReadAsStreamAsync());
+                return userData;
+            }
+            return null;
+        }
+    }
+
+    public class LoginResponse
+    {
+        public string token;
+        public string callsign;
     }
 
 }
