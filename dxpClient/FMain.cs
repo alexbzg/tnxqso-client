@@ -82,10 +82,30 @@ namespace tnxqsoClient
                 ProtoBufSerialization.WriteList(qsoFilePath, storedQSOs, false);
             config.data.rafaChanged += rafaChanged;
             gpsReader.locationChanged += locationChanged;
+            config.data.logIO += onLoggedIO;
+            onLoggedIO(null, null);
             startGPSReader();
-            http = new HTTPService("http://73.ru/dxped/uwsgi/qso", gpsReader, config.data);
+            http = new HTTPService( gpsReader, config.data);
             http.connectionStateChanged += onHTTPConnection;
         }
+
+        private void onLoggedIO(object sender, EventArgs e)
+        {
+            DoInvoke(() => {
+                if (config.data.token == null)
+                {
+                    miLogin.Text = "Login";
+                    slLoggedIn.Text = "Not logged in";
+                    slLoggedIn.ForeColor = Color.Red;
+                } else
+                {
+                    miLogin.Text = "Logout";
+                    slLoggedIn.Text = "Logged in as " + config.data.callsign;
+                    slLoggedIn.ForeColor = Color.Green;
+                }
+            });
+            config.write();
+        }            
 
         private void updateQsoIndex( QSO qso )
         {
@@ -299,6 +319,18 @@ namespace tnxqsoClient
                 miFilter.Checked = false;
             miFilter.BackColor = miFilter.Checked ? SystemColors.MenuHighlight : DefaultBackColor;
         }
+
+        private void miLogin_Click(object sender, EventArgs e)
+        {
+            if (config.data.token == null)
+            {
+                FLogin fLogin = new FLogin(config.data, http);
+                fLogin.ShowDialog();
+            } else
+            {
+                config.data.token = null;
+            }
+        }
     }
 
     [DataContract]
@@ -327,8 +359,10 @@ namespace tnxqsoClient
         public string rafa { get { return _rafa; } set { _rafa = value; } }
         [XmlIgnore]
         public EventHandler<EventArgs> rafaChanged;
+        [XmlIgnore]
+        public EventHandler<EventArgs> logIO;
 
-        
+
 
         public int[] dgvQSOColumnsWidth;
         [DataMember]
@@ -363,6 +397,23 @@ namespace tnxqsoClient
         }
         [DataMember]
         public string wff;
+
+        [DataMember]
+        public string callsign;
+        [DataMember]
+        public string password;
+        [XmlIgnore]
+        private string _token;
+        [DataMember]
+        public string token { get { return _token; }
+            set {
+                if (_token != value)
+                {
+                    _token = value;
+                    logIO?.Invoke(this, new EventArgs());
+                }
+            } }
+
 
         public DXpConfig() : base() {
             try

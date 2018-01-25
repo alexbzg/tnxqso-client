@@ -74,7 +74,7 @@ namespace GPSReaderNS
         internal string lngD;
     }
 
-    class GPSReader
+    public class GPSReader
     {
         private static Regex portRE = new Regex(@"(?<=\()COM\d+(?=\))");
         public static List<SerialDeviceInfo> listSerialDevices()

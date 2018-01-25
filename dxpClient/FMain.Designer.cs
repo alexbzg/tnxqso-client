@@ -35,6 +35,7 @@ namespace tnxqsoClient
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tbCSFilter = new System.Windows.Forms.ToolStripTextBox();
             this.miFilter = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLogin = new System.Windows.Forms.ToolStripMenuItem();
             this.dgvQSO = new System.Windows.Forms.DataGridView();
             this.no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ts = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,6 +53,7 @@ namespace tnxqsoClient
             this.slConnection = new System.Windows.Forms.ToolStripStatusLabel();
             this.slCoords = new System.Windows.Forms.ToolStripStatusLabel();
             this.slLoc = new System.Windows.Forms.ToolStripStatusLabel();
+            this.slLoggedIn = new System.Windows.Forms.ToolStripStatusLabel();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQSO)).BeginInit();
@@ -64,7 +66,8 @@ namespace tnxqsoClient
             this.miSettings,
             this.exportToolStripMenuItem,
             this.tbCSFilter,
-            this.miFilter});
+            this.miFilter,
+            this.miLogin});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(1179, 27);
@@ -99,6 +102,13 @@ namespace tnxqsoClient
             this.miFilter.Size = new System.Drawing.Size(45, 23);
             this.miFilter.Text = "Filter";
             this.miFilter.Click += new System.EventHandler(this.tbCSFilter_TextChanged);
+            // 
+            // miLogin
+            // 
+            this.miLogin.Name = "miLogin";
+            this.miLogin.Size = new System.Drawing.Size(49, 23);
+            this.miLogin.Text = "Login";
+            this.miLogin.Click += new System.EventHandler(this.miLogin_Click);
             // 
             // dgvQSO
             // 
@@ -206,7 +216,8 @@ namespace tnxqsoClient
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.slConnection,
             this.slCoords,
-            this.slLoc});
+            this.slLoc,
+            this.slLoggedIn});
             this.statusStrip.Location = new System.Drawing.Point(0, 403);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(1179, 26);
@@ -231,6 +242,12 @@ namespace tnxqsoClient
             this.slLoc.ForeColor = System.Drawing.Color.Red;
             this.slLoc.Name = "slLoc";
             this.slLoc.Size = new System.Drawing.Size(0, 21);
+            // 
+            // slLoggedIn
+            // 
+            this.slLoggedIn.Name = "slLoggedIn";
+            this.slLoggedIn.Size = new System.Drawing.Size(105, 21);
+            this.slLoggedIn.Text = "Not logged in";
             // 
             // saveFileDialog
             // 
@@ -285,6 +302,8 @@ namespace tnxqsoClient
         private System.Windows.Forms.ToolStripStatusLabel slLoc;
         private System.Windows.Forms.ToolStripTextBox tbCSFilter;
         private System.Windows.Forms.ToolStripMenuItem miFilter;
+        private System.Windows.Forms.ToolStripMenuItem miLogin;
+        private System.Windows.Forms.ToolStripStatusLabel slLoggedIn;
     }
 }
 
