@@ -108,7 +108,7 @@ namespace tnxqsoClient
             if (qsoQueue.IsEmpty && config.token != null)
             {
                 HttpContent response = await post("log", qsoToken( qso));
-                if (response != null)
+                if (response == null)
                     addToQueue(qso);
             }
             else
@@ -257,7 +257,13 @@ namespace tnxqsoClient
         [IgnoreDataMember]
         GPSReader gps;
         [DataMember]
-        public string location { get { return gps?.coords?.toJSON(); } set { } }
+        public double[] location { get {
+                if ((bool)gps?.coords?.valid)
+                    return new double[] { gps.coords.lat, gps.coords.lng };
+                else
+                    return null;
+            }
+            set { } }
         [DataMember]
         public string loc { get { return config.loc; } set { } }
         [DataMember]

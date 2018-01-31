@@ -1,4 +1,4 @@
-﻿//#define FAKE_GPS
+﻿#define FAKE_GPS
 #define LOG_GPS
 using System;
 using System.Collections.Generic;
