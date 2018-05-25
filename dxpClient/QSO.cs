@@ -84,25 +84,25 @@ namespace tnxqsoClient
                 ).ToString( "0.000000", System.Globalization.NumberFormatInfo.InvariantInfo);
         }
 
-        public string adif()
+        public string adif(Dictionary<string, string> adifParams)
         {
-            string[] dt = ts.Split(' ');           
+            string[] dt = ts.Split(' ');
             return
                 adifField("CALL", cs) +
-                adifField("QSO_DATE", dt[0].Replace( "-", "" ) ) +
-                adifField("TIME_ON", dt[1].Replace( ":", "" ) ) +
+                adifField("QSO_DATE", dt[0].Replace("-", "")) +
+                adifField("TIME_ON", dt[1].Replace(":", "")) +
                 adifField("BAND", band) +
                 adifField("STATION_CALLSIGN", myCS) +
-                adifField("FREQ", adifFormatFreq(freq )) +
+                adifField("FREQ", adifFormatFreq(freq)) +
                 adifField("FREQ_RX", adifFormatFreq(freqRx)) +
                 adifField("MODE", mode) +
                 adifField("RST_RCVD", rcv) +
                 adifField("RST_SENT", snt) +
-                adifField("OPERATOR", oper) + 
+                adifField("OPERATOR", oper) +
                 adifField("GRIDSQUARE", loc) +
-                adifField("RDA",rda) +
-                adifField("RAFA",rafa) +
-                adifField("WFF",wff) +
+                adifField("RDA", rda) +
+                adifField("RAFA", adifParams.ContainsKey("RAFA") ? adifParams["RAFA"] : rafa) +
+                adifField("WFF", wff) +
                 " <EOR>";
         }
     }

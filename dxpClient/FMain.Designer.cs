@@ -32,10 +32,13 @@ namespace tnxqsoClient
         {
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLogin = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miExportRDA = new System.Windows.Forms.ToolStripMenuItem();
+            this.miExportRAFA = new System.Windows.Forms.ToolStripMenuItem();
             this.tbCSFilter = new System.Windows.Forms.ToolStripTextBox();
             this.miFilter = new System.Windows.Forms.ToolStripMenuItem();
-            this.miLogin = new System.Windows.Forms.ToolStripMenuItem();
+            this.miStats = new System.Windows.Forms.ToolStripMenuItem();
             this.dgvQSO = new System.Windows.Forms.DataGridView();
             this.no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ts = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -54,7 +57,7 @@ namespace tnxqsoClient
             this.slCoords = new System.Windows.Forms.ToolStripStatusLabel();
             this.slLoc = new System.Windows.Forms.ToolStripStatusLabel();
             this.slLoggedIn = new System.Windows.Forms.ToolStripStatusLabel();
-            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQSO)).BeginInit();
             this.statusStrip.SuspendLayout();
@@ -64,10 +67,11 @@ namespace tnxqsoClient
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miSettings,
+            this.miLogin,
             this.exportToolStripMenuItem,
             this.tbCSFilter,
             this.miFilter,
-            this.miLogin});
+            this.miStats});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(1179, 27);
@@ -81,12 +85,35 @@ namespace tnxqsoClient
             this.miSettings.Text = "Settings";
             this.miSettings.Click += new System.EventHandler(this.miSettings_Click);
             // 
+            // miLogin
+            // 
+            this.miLogin.Name = "miLogin";
+            this.miLogin.Size = new System.Drawing.Size(49, 23);
+            this.miLogin.Text = "Login";
+            this.miLogin.Click += new System.EventHandler(this.miLogin_Click);
+            // 
             // exportToolStripMenuItem
             // 
+            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miExportRDA,
+            this.miExportRAFA});
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             this.exportToolStripMenuItem.Size = new System.Drawing.Size(52, 23);
             this.exportToolStripMenuItem.Text = "Export";
-            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
+            // 
+            // miExportRDA
+            // 
+            this.miExportRDA.Name = "miExportRDA";
+            this.miExportRDA.Size = new System.Drawing.Size(180, 22);
+            this.miExportRDA.Text = "RDA";
+            this.miExportRDA.Click += new System.EventHandler(this.miExportRDA_Click);
+            // 
+            // miExportRAFA
+            // 
+            this.miExportRAFA.Name = "miExportRAFA";
+            this.miExportRAFA.Size = new System.Drawing.Size(180, 22);
+            this.miExportRAFA.Text = "RAFA";
+            this.miExportRAFA.Click += new System.EventHandler(this.miExportRAFA_Click);
             // 
             // tbCSFilter
             // 
@@ -103,12 +130,12 @@ namespace tnxqsoClient
             this.miFilter.Text = "Filter";
             this.miFilter.Click += new System.EventHandler(this.tbCSFilter_TextChanged);
             // 
-            // miLogin
+            // miStats
             // 
-            this.miLogin.Name = "miLogin";
-            this.miLogin.Size = new System.Drawing.Size(49, 23);
-            this.miLogin.Text = "Login";
-            this.miLogin.Click += new System.EventHandler(this.miLogin_Click);
+            this.miStats.Name = "miStats";
+            this.miStats.Size = new System.Drawing.Size(44, 23);
+            this.miStats.Text = "Stats";
+            this.miStats.Click += new System.EventHandler(this.miStats_Click);
             // 
             // dgvQSO
             // 
@@ -249,10 +276,6 @@ namespace tnxqsoClient
             this.slLoggedIn.Size = new System.Drawing.Size(105, 21);
             this.slLoggedIn.Text = "Not logged in";
             // 
-            // saveFileDialog
-            // 
-            this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
-            // 
             // FMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -286,7 +309,7 @@ namespace tnxqsoClient
         private System.Windows.Forms.ToolStripStatusLabel slConnection;
         private System.Windows.Forms.ToolStripStatusLabel slCoords;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.DataGridViewTextBoxColumn no;
         private System.Windows.Forms.DataGridViewTextBoxColumn ts;
         private System.Windows.Forms.DataGridViewTextBoxColumn myCS;
@@ -304,6 +327,9 @@ namespace tnxqsoClient
         private System.Windows.Forms.ToolStripMenuItem miFilter;
         private System.Windows.Forms.ToolStripMenuItem miLogin;
         private System.Windows.Forms.ToolStripStatusLabel slLoggedIn;
+        private System.Windows.Forms.ToolStripMenuItem miExportRDA;
+        private System.Windows.Forms.ToolStripMenuItem miExportRAFA;
+        private System.Windows.Forms.ToolStripMenuItem miStats;
     }
 }
 
