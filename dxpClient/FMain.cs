@@ -267,12 +267,6 @@ namespace tnxqsoClient
             }
         }
 
-        private void miStats_Click(object sender, EventArgs e)
-        {
-            FStats fs = new FStats(blQSO.ToList());
-            fs.Show();
-        }
-
         private void tbCSFilter_TextChanged(object sender, EventArgs e)
         {
             if (tbCSFilter.Text != "")
@@ -302,6 +296,17 @@ namespace tnxqsoClient
                 config.data.token = null;
             }
         }
+
+        private void miStatsRDA_Click(object sender, EventArgs e)
+        {
+            new FStats(blQSO.ToList(), "RDA", null).Show();
+        }
+
+        private void miStatsRAFA_Click(object sender, EventArgs e)
+        {
+            new FStats(blQSO.ToList(), "RAFA", config.data.rafaValues.ToList()).Show();
+        }
+
 
         private void miExportRDA_Click(object sender, EventArgs e)
         {
