@@ -31,7 +31,7 @@ namespace tnxqsoClient
         BindingList<Entry> blStats = new BindingList<Entry>();
         BindingSource bsStats;
 
-        public FStats(List<QSO> lQSO, string type, List<string> values)
+        public FStats(List<QSO> lQSO, string type)
         {
             InitializeComponent();
 

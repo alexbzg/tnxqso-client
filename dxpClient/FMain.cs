@@ -299,12 +299,12 @@ namespace tnxqsoClient
 
         private void miStatsRDA_Click(object sender, EventArgs e)
         {
-            new FStats(blQSO.ToList(), "RDA", null).Show();
+            new FStats(blQSO.ToList(), "RDA").Show();
         }
 
         private void miStatsRAFA_Click(object sender, EventArgs e)
         {
-            new FStats(blQSO.ToList(), "RAFA", config.data.rafaValues.ToList()).Show();
+            new FStats(blQSO.ToList(), "RAFA").Show();
         }
 
 
@@ -324,11 +324,22 @@ namespace tnxqsoClient
         {
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                config.data.rafaValues.ToList().ForEach(val =>
+                Dictionary<string, List<QSO>> data = new Dictionary<string, List<QSO>>();
+                blQSO
+                    .Where(qso => qso.rafa != null).ToList()
+                    .ForEach(qso =>
+                    {
+                        string[] rafas = qso.rafa.Split(new string[] { ", " }, StringSplitOptions.None);
+                        foreach (string rafa in rafas)
+                        {
+                            if (!data.ContainsKey(rafa))
+                                data[rafa] = new List<QSO>();
+                            data[rafa].Add(qso);
+                        }
+                    });
+                data.Keys.ToList().ForEach(val =>
                 {
-                    List<QSO> qsos = blQSO.Where(x => x.rafa != null && x.rafa.Contains(val)).ToList();
-                    if (qsos.Count > 0)
-                        writeADIF(Path.Combine(folderBrowserDialog.SelectedPath, val + ".adi"), qsos, new Dictionary<string, string>() { { "RAFA", val } });
+                    writeADIF(Path.Combine(folderBrowserDialog.SelectedPath, val + ".adi"), data[val], new Dictionary<string, string>() { { "RAFA", val } });
                 });
             }
         }
@@ -382,8 +393,6 @@ namespace tnxqsoClient
 
         [XmlIgnore]
         Dictionary<string, string> rafaData = new Dictionary<string, string>();
-        [XmlIgnore]
-        public HashSet<string> rafaValues = new HashSet<string>();
         [XmlIgnore]
         string _rafa;
         [DataMember]
@@ -465,8 +474,6 @@ namespace tnxqsoClient
                                     rafaData[key] += ", " + entry;
                                 else
                                     rafaData[key] = entry;
-                                if (!rafaValues.Contains(entry))
-                                    rafaValues.Add(entry);
                             }
                         }
                     } while (sr.Peek() >= 0);
