@@ -36,11 +36,11 @@ namespace tnxqsoClient
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miExportRDA = new System.Windows.Forms.ToolStripMenuItem();
             this.miExportRAFA = new System.Windows.Forms.ToolStripMenuItem();
-            this.miStatsRDA = new System.Windows.Forms.ToolStripMenuItem();
-            this.miStatsRAFA = new System.Windows.Forms.ToolStripMenuItem();
             this.tbCSFilter = new System.Windows.Forms.ToolStripTextBox();
             this.miFilter = new System.Windows.Forms.ToolStripMenuItem();
             this.miStats = new System.Windows.Forms.ToolStripMenuItem();
+            this.miStatsRDA = new System.Windows.Forms.ToolStripMenuItem();
+            this.miStatsRAFA = new System.Windows.Forms.ToolStripMenuItem();
             this.dgvQSO = new System.Windows.Forms.DataGridView();
             this.no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ts = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -68,8 +68,8 @@ namespace tnxqsoClient
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.miSettings,
             this.miLogin,
+            this.miSettings,
             this.exportToolStripMenuItem,
             this.tbCSFilter,
             this.miFilter,
@@ -106,14 +106,14 @@ namespace tnxqsoClient
             // miExportRDA
             // 
             this.miExportRDA.Name = "miExportRDA";
-            this.miExportRDA.Size = new System.Drawing.Size(180, 22);
+            this.miExportRDA.Size = new System.Drawing.Size(102, 22);
             this.miExportRDA.Text = "RDA";
             this.miExportRDA.Click += new System.EventHandler(this.miExportRDA_Click);
             // 
             // miExportRAFA
             // 
             this.miExportRAFA.Name = "miExportRAFA";
-            this.miExportRAFA.Size = new System.Drawing.Size(180, 22);
+            this.miExportRAFA.Size = new System.Drawing.Size(102, 22);
             this.miExportRAFA.Text = "RAFA";
             this.miExportRAFA.Click += new System.EventHandler(this.miExportRAFA_Click);
             // 
@@ -144,21 +144,20 @@ namespace tnxqsoClient
             // miStatsRDA
             // 
             this.miStatsRDA.Name = "miStatsRDA";
-            this.miStatsRDA.Size = new System.Drawing.Size(180, 22);
+            this.miStatsRDA.Size = new System.Drawing.Size(102, 22);
             this.miStatsRDA.Text = "RDA";
             this.miStatsRDA.Click += new System.EventHandler(this.miStatsRDA_Click);
             // 
             // miStatsRAFA
             // 
             this.miStatsRAFA.Name = "miStatsRAFA";
-            this.miStatsRAFA.Size = new System.Drawing.Size(180, 22);
+            this.miStatsRAFA.Size = new System.Drawing.Size(102, 22);
             this.miStatsRAFA.Text = "RAFA";
             this.miStatsRAFA.Click += new System.EventHandler(this.miStatsRAFA_Click);
             // 
             // dgvQSO
             // 
             this.dgvQSO.AllowUserToAddRows = false;
-            this.dgvQSO.AllowUserToDeleteRows = false;
             this.dgvQSO.AllowUserToResizeRows = false;
             this.dgvQSO.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
@@ -304,7 +303,7 @@ namespace tnxqsoClient
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FMain";
-            this.Text = "DXpedition";
+            this.Text = "QSO Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FMain_FormClosing);
             this.Load += new System.EventHandler(this.FMain_Load);
             this.menuStrip.ResumeLayout(false);

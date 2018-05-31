@@ -42,7 +42,7 @@ namespace tnxqsoClient
             gpsReader = _gpsReader;
             config = _config;
             locationData = new LocationData(config, gpsReader);
-            pingTimer = new System.Threading.Timer( obj => ping(), null, 5000, pingInterval);
+            schedulePingTimer();
             List<QSO> unsentQSOs = ProtoBufSerialization.Read<List<QSO>>(unsentFilePath);
             if (unsentQSOs != null && unsentQSOs.Count > 0)
                 Task.Run( () =>
@@ -51,6 +51,11 @@ namespace tnxqsoClient
                         postQso(qso);
                     saveUnsent();
                 });
+        }
+
+        private void schedulePingTimer()
+        {
+            pingTimer = new System.Threading.Timer(obj => ping(), null, 5000, pingInterval);
         }
 
         private async Task<HttpContent> post(string _URI, JSONSerializable data)
@@ -170,6 +175,8 @@ namespace tnxqsoClient
                 config.callsign = userData.callsign;
                 config.password = password;
                 config.token = userData.token;
+                schedulePingTimer();
+                Task.Run( () => processQueue());
                 return true;
             }
             return false;

@@ -265,6 +265,8 @@ namespace tnxqsoClient
                 dgvQSO.FirstDisplayedScrollingRowIndex = 0;
                 dgvQSO.Refresh();
             }
+            if (config.data.token == null)
+                showLoginForm();
         }
 
         private void tbCSFilter_TextChanged(object sender, EventArgs e)
@@ -289,12 +291,16 @@ namespace tnxqsoClient
         {
             if (config.data.token == null)
             {
-                FLogin fLogin = new FLogin(config.data, http);
-                fLogin.ShowDialog();
+                showLoginForm();
             } else
             {
                 config.data.token = null;
             }
+        }
+
+        private void showLoginForm()
+        {
+            new FLogin(config.data, http).ShowDialog();
         }
 
         private void miStatsRDA_Click(object sender, EventArgs e)
