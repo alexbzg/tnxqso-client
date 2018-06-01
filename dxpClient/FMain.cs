@@ -43,6 +43,7 @@ namespace tnxqsoClient
             Debug.AutoFlush = true;
 #endif
             config = new XmlConfigNS.XmlConfig<DXpConfig>();
+            config.data.initialize();
             qsoFactory = new QSOFactory( config.data );
             InitializeComponent();
             udpListener.DataReceived += UDPDataReceived;
@@ -75,12 +76,12 @@ namespace tnxqsoClient
                     updateQsoIndex(qso);
                 }
                 QSO lastQSO = storedQSOs.Last();
-                if (lastQSO.rda == config.data.rda)
+                if (lastQSO.rda == config.data.getOptionalColumnValue("RDA"))
                     qsoFactory.no = lastQSO.no + 1;
             }
             if (qsoEr)
                 ProtoBufSerialization.WriteList(qsoFilePath, storedQSOs, false);
-            config.data.rafaChanged += rafaChanged;
+            config.data.optionalColumnValueChanged += optionalColumnValueChanged;
             gpsReader.locationChanged += locationChanged;
             config.data.logIO += onLoggedIO;
             onLoggedIO(null, null);
@@ -150,22 +151,21 @@ namespace tnxqsoClient
 
         private void locationChanged( object sender, EventArgs e )
         {
-            string newLoc = DXpConfig.qth(gpsReader.coords);
-            if ( newLoc != config.data.loc)
-            {
-                config.data.loc = newLoc;
-                config.write();
-            }
+            config.data.setOptionalColumnValue( "Loc", DXpConfig.qth(gpsReader.coords) );
+            config.write();
             slCoords.Text = gpsReader.coords.ToString();
-            slLoc.Text = config.data.loc;
-            if (config.data.rafa != null)
-                slLoc.Text += " RAFA " + config.data.rafa;
+            slLoc.Text = config.data.optionalColumns["Loc"].value;
+            if (config.data.optionalColumns["RAFA"].value != null)
+                slLoc.Text += " RAFA " + config.data.optionalColumns["RAFA"].value;
         }
 
-        private void rafaChanged( object sender, EventArgs e)
+        private void optionalColumnValueChanged( object sender, OptionalColumnValueChangedEventArgs e)
         {
-            showBalloon("New RAFA " + config.data.rafa);
-            config.write();
+            if (e.column == "RAFA")
+            {
+                showBalloon("New RAFA " + config.data.optionalColumns["RAFA"].value);
+                config.write();
+            }
         }
 
         private void showBalloon( string text )
@@ -246,8 +246,14 @@ namespace tnxqsoClient
             FSettings fs = new FSettings( config.data);
             if ( fs.ShowDialog(this) == DialogResult.OK )
             {
-                config.data.rda = fs.rda;
-                config.data.wff = fs.wwf;                
+                fs.blOptionalColumns.ToList().ForEach(c =>
+               {
+                   config.data.setOptionalColumnValue(c.name, c.value);
+                   config.data.optionalColumns[c.name].show = c.show;
+                   dgvQSO.Columns[c.name].Visible = c.show;
+               });
+                config.data.userColumns.Clear();
+                config.data.userColumns.AddRange(fs.blUserColumns);
                 if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsReaderWirelessGW != fs.gpsReaderWirelessGW)
                 {
                     config.data.gpsReaderWirelessGW = fs.gpsReaderWirelessGW;
@@ -265,6 +271,8 @@ namespace tnxqsoClient
                 dgvQSO.FirstDisplayedScrollingRowIndex = 0;
                 dgvQSO.Refresh();
             }
+            foreach (KeyValuePair<string, OptionalColumnSettings> kv in config.data.optionalColumns)
+                dgvQSO.Columns[kv.Key].Visible = kv.Value.show;
             if (config.data.token == null)
                 showLoginForm();
         }
@@ -379,16 +387,33 @@ namespace tnxqsoClient
         }
     }
 
-[DataContract]
+    public class OptionalColumnSettings
+    {
+        internal bool _show;
+        public bool show { get { return _show; } set { _show = value; } }
+        internal string _value;
+        public string value { get { return _value; } set { _value = value; } }
+    }
+
+    public class UserColumnSettings : OptionalColumnSettings
+    {
+        internal string _name;
+        public string name { get { return _name; } set { _name = value; } }
+    }
+
+    public class OptionalColumnValueChangedEventArgs : EventArgs
+    {
+        public string column;
+        public string value;
+    }
+
+
+    [DataContract]
     public class DXpConfig : StorableFormConfig
     {
+        static readonly string[] OptionalColumnsList = new string[] { "RDA", "RAFA", "WFF", "Loc" };
+        public static readonly int UserColumnsCount = 2;
 
-        [XmlIgnoreAttribute]
-        private string _rda;
-        [XmlIgnoreAttribute]
-        private string _loc;
-        [XmlIgnoreAttribute]
-        public EventHandler<EventArgs> rdaChanged;
         [XmlIgnore]
         string _gpsReaderDeviceID;
         public string gpsReaderDeviceID {
@@ -397,52 +422,46 @@ namespace tnxqsoClient
         }
         public bool gpsReaderWirelessGW;
 
+        [DataMember]
+        public SerializableDictionary<string, OptionalColumnSettings> optionalColumns = new SerializableDictionary<string, OptionalColumnSettings>();
+        [DataMember]
+        public List<UserColumnSettings> userColumns = new List<UserColumnSettings>();
+
         [XmlIgnore]
         Dictionary<string, string> rafaData = new Dictionary<string, string>();
         [XmlIgnore]
-        string _rafa;
-        [DataMember]
-        public string rafa { get { return _rafa; } set { _rafa = value; } }
-        [XmlIgnore]
-        public EventHandler<EventArgs> rafaChanged;
+        public EventHandler<OptionalColumnValueChangedEventArgs> optionalColumnValueChanged;
         [XmlIgnore]
         public EventHandler<EventArgs> logIO;
 
+        public void setOptionalColumnValue( string column, string value )
+        {
+            if (optionalColumns[column].value != value)
+            {
+                optionalColumns[column].value = value;
+                if ( column == "Loc")
+                {
+                    string newRafa = rafaData.ContainsKey(value) ? rafaData[value] : null;
+                    setOptionalColumnValue("RAFA", newRafa);
+                    optionalColumnValueChanged?.Invoke(this, new OptionalColumnValueChangedEventArgs
+                    {
+                        column = column,
+                        value = value
+                    });
+                }
+            }
 
+        }
+
+        public string getOptionalColumnValue( string column )
+        {
+            if (optionalColumns != null && optionalColumns.ContainsKey(column) && optionalColumns[column] != null)
+                return optionalColumns[column].value;
+            else
+                return null;
+        }
 
         public int[] dgvQSOColumnsWidth;
-        [DataMember]
-        public string rda {
-            get { return _rda; }
-            set
-            {
-                if ( value != _rda )
-                {
-                    _rda = value;                    
-                    rdaChanged?.Invoke(this, new EventArgs());
-                }
-            }
-        }
-        [DataMember]
-        public string loc
-        {
-            get { return _loc; }
-            set
-            {
-                if (value != _loc)
-                {
-                    _loc = value;
-                    string newRafa = rafaData.ContainsKey(_loc) ? rafaData[_loc] : null;
-                    if ( newRafa != rafa)
-                    {
-                        rafa = newRafa;
-                        rafaChanged?.Invoke(this, new EventArgs());
-                    }
-                }
-            }
-        }
-        [DataMember]
-        public string wff;
 
         [DataMember]
         public string callsign;
@@ -491,6 +510,18 @@ namespace tnxqsoClient
                 System.Diagnostics.Debug.WriteLine(e.ToString());
                 MessageBox.Show("Rafa data could not be loaded: " + e.ToString(), "DXpedition", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+        }
+
+        public void initialize()
+        {
+            foreach (string c in OptionalColumnsList)
+                if (!optionalColumns.ContainsKey(c))
+                    optionalColumns[c] = new OptionalColumnSettings
+                    {
+                        _show = true,
+                        _value = null
+                    };
 
         }
 

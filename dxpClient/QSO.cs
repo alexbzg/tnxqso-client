@@ -31,6 +31,7 @@ namespace tnxqsoClient
         internal string _freqRx;
         internal string _oper;
         internal int _no;
+        internal string[] _userFields;
 
         [DataMember, ProtoMember(1)]
         public string ts { get { return _ts; } set { _ts = value; } }
@@ -58,6 +59,8 @@ namespace tnxqsoClient
         public string rafa { get { return _rafa; } set { _rafa = value; } }
         [DataMember, ProtoMember(13)]
         public string loc { get { return _loc; } set { _loc = value; } }
+        [DataMember, ProtoMember(14)]
+        public string[] userFields { get { return _userFields; } set { _userFields = value; } }
         public string freqRx { get { return _freqRx == null ? _freq : _freqRx; } set { _freqRx = value; } }
         public string oper { get { return _oper == null ? _myCS : _oper; } set { _oper = value; } }
 
@@ -117,12 +120,13 @@ namespace tnxqsoClient
         public QSOFactory( DXpConfig _settings )
         {
             settings = _settings;
-            settings.rdaChanged += rdaChanged; 
+            settings.optionalColumnValueChanged += optionalColumnValueChanged; 
         }
 
-        private void rdaChanged(object sender, EventArgs e)
+        private void optionalColumnValueChanged(object sender, OptionalColumnValueChangedEventArgs e)
         {
-            no = 1;
+            if (e.column == "RDA")
+                no = 1;
         }
 
 
@@ -134,6 +138,12 @@ namespace tnxqsoClient
 
             if (root.Name != "contactinfo")
                 return null;
+
+            string[] userFields = new string[settings.userColumns.Count];
+            for (int c = 0; c < userFields.Length; c++)
+                if (settings.userColumns[c].show)
+                    userFields[c] = settings.userColumns[c].value;
+
 
             return new QSO {
                 _ts = root.SelectSingleNode("timestamp").InnerText,
@@ -147,10 +157,11 @@ namespace tnxqsoClient
                 _freqRx = QSO.formatFreq(root.SelectSingleNode("rxfreq").InnerText),
                 _oper = root.SelectSingleNode("operator").InnerText,
                 _no = no++,
-                _rda = settings.rda,
-                _rafa = settings.rafa,
-                _wff = settings.wff,
-                _loc = settings.loc
+                _rda = settings.optionalColumns["RDA"].value,
+                _rafa = settings.optionalColumns["RAFA"].value,
+                _wff = settings.optionalColumns["WFF"].value,
+                _loc = settings.optionalColumns["Loc"].value,
+                _userFields = userFields
             };
         }
     }

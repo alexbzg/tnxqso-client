@@ -15,18 +15,23 @@ namespace tnxqsoClient
 {
     public partial class FSettings : Form
     {
-        public string rda {  get { return tbRDA.Text; } }
-        public string wwf { get { return tbWWF.Text; } }
+
+        
+
         public string gpsReaderDeviceID {  get { return cbGPSPort.SelectedIndex == -1 ? null : serialPorts[cbGPSPort.SelectedIndex].deviceID; } }
         public bool gpsReaderWirelessGW { get { return rbGPSWirelessGW.Checked; } }
 
         List<SerialDeviceInfo> serialPorts = GPSReader.listSerialDevices();
 
+        public BindingList<UserColumnSettings> blOptionalColumns = new BindingList<UserColumnSettings>();
+        BindingSource bsOptionalColumns;
+
+        public BindingList<UserColumnSettings> blUserColumns = new BindingList<UserColumnSettings>();
+        BindingSource bsUserColumns;
+
         public FSettings( DXpConfig data )
         {
             InitializeComponent();
-            tbRDA.Text = data.rda;
-            tbWWF.Text = data.wff;
 
             foreach (SerialDeviceInfo sp in serialPorts)
             {
@@ -41,7 +46,41 @@ namespace tnxqsoClient
             rbGPSSerial.Checked = !data.gpsReaderWirelessGW;
             rbGPSWirelessGW.Checked = data.gpsReaderWirelessGW;
             cbGPSPort.Enabled = !data.gpsReaderWirelessGW;
-            
+
+            bsOptionalColumns = new BindingSource(blOptionalColumns, null);
+            dgvOptionalColumns.AutoGenerateColumns = false;
+            dgvOptionalColumns.DataSource = bsOptionalColumns;
+
+            foreach (KeyValuePair<string, OptionalColumnSettings> kv in data.optionalColumns)
+                blOptionalColumns.Add(new UserColumnSettings
+                {
+                    _name = kv.Key,
+                    _show = kv.Value.show,
+                    _value = kv.Value.value
+                });
+
+            dgvOptionalColumns.Refresh();
+
+            bsUserColumns = new BindingSource(blUserColumns, null);
+            dgvUserColumns.AutoGenerateColumns = false;
+            dgvUserColumns.DataSource = bsUserColumns;
+
+            foreach (UserColumnSettings c in data.userColumns)
+                blUserColumns.Add(new UserColumnSettings
+                {
+                    _name = c.name,
+                    _show = c.show,
+                    _value = c.value
+                });
+            updateAllowAddUserColumns();
+
+            dgvUserColumns.Refresh();
+
+        }
+
+        private void updateAllowAddUserColumns()
+        {
+            dgvUserColumns.AllowUserToAddRows = blUserColumns.Count < DXpConfig.UserColumnsCount;
         }
 
         private void rbGPSSource_Click(object sender, EventArgs e)
@@ -50,6 +89,25 @@ namespace tnxqsoClient
             foreach (RadioButton rb in new RadioButton[] { rbGPSSerial, rbGPSWirelessGW })
                 rb.Checked = rb == s;
             cbGPSPort.Enabled = rbGPSSerial.Checked;
+        }
+
+        private void dgvColumns_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dgvUserColumns_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+        }
+
+        private void dgvUserColumns_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        {
+            updateAllowAddUserColumns();
+        }
+
+        private void dgvUserColumns_RowValidated(object sender, DataGridViewCellEventArgs e)
+        {
+            updateAllowAddUserColumns();
         }
     }
 }

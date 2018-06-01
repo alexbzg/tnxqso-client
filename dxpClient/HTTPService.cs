@@ -272,11 +272,11 @@ namespace tnxqsoClient
             }
             set { } }
         [DataMember]
-        public string loc { get { return config.loc; } set { } }
+        public string loc { get { return config.getOptionalColumnValue("Loc"); } set { } }
         [DataMember]
-        public string rafa { get { return config.rafa; } set { } }
+        public string rafa { get { return config.getOptionalColumnValue("RAFA"); } set { } }
         [DataMember]
-        public string rda { get { return config.rda; } set { } }
+        public string rda { get { return config.getOptionalColumnValue("RDA"); } set { } }
 
         internal LocationData(DXpConfig _config, GPSReader _gps) : base(_config)
         {

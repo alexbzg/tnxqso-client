@@ -234,25 +234,25 @@ namespace tnxqsoClient
             // 
             this.rda.DataPropertyName = "rda";
             this.rda.HeaderText = "RDA";
-            this.rda.Name = "rda";
+            this.rda.Name = "RDA";
             // 
             // loc
             // 
             this.loc.DataPropertyName = "loc";
             this.loc.HeaderText = "Loc";
-            this.loc.Name = "loc";
+            this.loc.Name = "Loc";
             // 
             // rafa
             // 
             this.rafa.DataPropertyName = "rafa";
             this.rafa.HeaderText = "RAFA";
-            this.rafa.Name = "rafa";
+            this.rafa.Name = "RAFA";
             // 
             // wff
             // 
             this.wff.DataPropertyName = "wff";
             this.wff.HeaderText = "WFF";
-            this.wff.Name = "wff";
+            this.wff.Name = "WFF";
             // 
             // statusStrip
             // 
