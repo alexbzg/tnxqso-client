@@ -30,7 +30,6 @@ namespace tnxqsoClient
         BindingSource bsQSO;
         string qsoFilePath = Application.StartupPath + "\\qso.dat";
 
-
         public FMain()
         {
 #if DEBUG
@@ -48,19 +47,30 @@ namespace tnxqsoClient
             InitializeComponent();
             udpListener.DataReceived += UDPDataReceived;
             udpListener.StartListener(12060);
+
             bsQSO = new BindingSource(blQSO, null);
             dgvQSO.AutoGenerateColumns = false;
             dgvQSO.DataSource = bsQSO;
-            if (config.data.dgvQSOColumnsWidth != null && config.data.dgvQSOColumnsWidth.Count() == dgvQSO.ColumnCount)
-                for (var co = 0; co < dgvQSO.ColumnCount; co++)
-                    dgvQSO.Columns[co].Width = config.data.dgvQSOColumnsWidth[co];
-            else
+            for (int c = 0; c < DXpConfig.UserColumnsCount; c++)
             {
-                config.data.dgvQSOColumnsWidth = new int[dgvQSO.ColumnCount];
-                for (var co = 0; co < dgvQSO.ColumnCount; co++)
-                    config.data.dgvQSOColumnsWidth[co] = dgvQSO.Columns[co].Width;
-                config.write();
+                UserColumnSettings cs = config.data.userColumns != null && config.data.userColumns.Count > c ? config.data.userColumns[c] : null;
+                DataGridViewColumn col = new DataGridViewTextBoxColumn();
+                col.Name = "userFieldColumn" + c.ToString();
+                col.DataPropertyName = "userField" + c.ToString();
+                col.Visible = cs != null ? cs.show : false;
+                col.HeaderText = cs != null ? cs.name : "";
+                dgvQSO.Columns.Add(col);
             }
+            if (config.data.dgvQSOColumnsWidth != null)
+                for (int co = 0; co < dgvQSO.ColumnCount && co < config.data.dgvQSOColumnsWidth.Count(); co++)
+                    dgvQSO.Columns[co].Width = config.data.dgvQSOColumnsWidth[co];
+            if (config.data.dgvQSOColumnsWidth.Count < dgvQSO.ColumnCount)
+            {
+                for (int co = config.data.dgvQSOColumnsWidth.Count; co < dgvQSO.ColumnCount; co++)
+                    config.data.dgvQSOColumnsWidth.Add(dgvQSO.Columns[co].Width);
+                writeConfig();
+            }
+
             bool qsoEr;
             List<QSO> storedQSOs = ProtoBufSerialization.ReadListItems<QSO>(qsoFilePath, out qsoEr);
             if (storedQSOs.Count > 0)
@@ -88,6 +98,14 @@ namespace tnxqsoClient
             startGPSReader();
             http = new HTTPService( gpsReader, config.data);
             http.connectionStateChanged += onHTTPConnection;
+        }
+
+        public void updateUserColumn( int c)
+        {
+            UserColumnSettings cs = config.data.userColumns != null && config.data.userColumns.Count > c ? config.data.userColumns[c] : null;
+            DataGridViewColumn col = dgvQSO.Columns["userFieldColumn" + c.ToString()];
+            col.Visible = cs != null ? cs.show : false;
+            col.HeaderText = cs != null ? cs.name : "";
         }
 
         private void onLoggedIO(object sender, EventArgs e)
@@ -241,7 +259,7 @@ namespace tnxqsoClient
             config.write();
         }
 
-        private void miSettings_Click(object sender, EventArgs e)
+        private async void miSettings_Click(object sender, EventArgs e)
         {
             FSettings fs = new FSettings( config.data);
             if ( fs.ShowDialog(this) == DialogResult.OK )
@@ -254,6 +272,8 @@ namespace tnxqsoClient
                });
                 config.data.userColumns.Clear();
                 config.data.userColumns.AddRange(fs.blUserColumns);
+                for (int c = 0; c < DXpConfig.UserColumnsCount; c++)
+                    updateUserColumn(c);
                 if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsReaderWirelessGW != fs.gpsReaderWirelessGW)
                 {
                     config.data.gpsReaderWirelessGW = fs.gpsReaderWirelessGW;
@@ -261,6 +281,7 @@ namespace tnxqsoClient
                     startGPSReader();
                 }
                 config.write();
+                await http.postUserColumns();
             }
         }
 
@@ -461,7 +482,7 @@ namespace tnxqsoClient
                 return null;
         }
 
-        public int[] dgvQSOColumnsWidth;
+        public List<int> dgvQSOColumnsWidth;
 
         [DataMember]
         public string callsign;

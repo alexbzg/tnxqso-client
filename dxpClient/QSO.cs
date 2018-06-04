@@ -63,6 +63,27 @@ namespace tnxqsoClient
         public string[] userFields { get { return _userFields; } set { _userFields = value; } }
         public string freqRx { get { return _freqRx == null ? _freq : _freqRx; } set { _freqRx = value; } }
         public string oper { get { return _oper == null ? _myCS : _oper; } set { _oper = value; } }
+        public string userField0 {
+            get
+            {
+                if (userFields != null && userFields.Length > 0)
+                    return userFields[0];
+                else
+                    return null;
+            }
+            set { }
+        }
+        public string userField1
+        {
+            get
+            {
+                if (userFields != null && userFields.Length > 1)
+                    return userFields[1];
+                else
+                    return null;
+            }
+            set { }
+        }
 
         public string toJSON()
         {

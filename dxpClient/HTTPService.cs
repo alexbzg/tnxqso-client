@@ -35,6 +35,7 @@ namespace tnxqsoClient
         private GPSReader gpsReader;
         private DXpConfig config;
         volatile LocationData locationData;
+        volatile UserColumnsData userColumnsData;
 
 
         public HTTPService( GPSReader _gpsReader, DXpConfig _config )
@@ -42,6 +43,7 @@ namespace tnxqsoClient
             gpsReader = _gpsReader;
             config = _config;
             locationData = new LocationData(config, gpsReader);
+            userColumnsData = new UserColumnsData(config);
             schedulePingTimer();
             List<QSO> unsentQSOs = ProtoBufSerialization.Read<List<QSO>>(unsentFilePath);
             if (unsentQSOs != null && unsentQSOs.Count > 0)
@@ -177,9 +179,17 @@ namespace tnxqsoClient
                 config.token = userData.token;
                 schedulePingTimer();
                 Task.Run( () => processQueue());
+                Task.Run(() => postUserColumns());
                 return true;
             }
             return false;
+        }
+
+        public async Task postUserColumns()
+        {
+            if (config.token == null)
+                return;
+            HttpContent response = await post("userSettings", userColumnsData);
         }
 
         private QSOtoken qsoToken( QSO qso )
@@ -282,6 +292,23 @@ namespace tnxqsoClient
         {
             gps = _gps;
         }
+
+    }
+
+    [DataContract]
+    class UserColumnsData : JSONToken
+    {
+        [DataMember]
+        public string[] userColumns
+        {
+            get
+            {
+                return config.userColumns.Select(x => x.name).ToArray();
+            }
+            set { }
+        }
+
+        internal UserColumnsData(DXpConfig _config) : base(_config) { }
 
     }
 
