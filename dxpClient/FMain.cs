@@ -64,6 +64,8 @@ namespace tnxqsoClient
             if (config.data.dgvQSOColumnsWidth != null)
                 for (int co = 0; co < dgvQSO.ColumnCount && co < config.data.dgvQSOColumnsWidth.Count(); co++)
                     dgvQSO.Columns[co].Width = config.data.dgvQSOColumnsWidth[co];
+            else
+                config.data.dgvQSOColumnsWidth = new List<int>();
             if (config.data.dgvQSOColumnsWidth.Count < dgvQSO.ColumnCount)
             {
                 for (int co = config.data.dgvQSOColumnsWidth.Count; co < dgvQSO.ColumnCount; co++)
@@ -264,14 +266,22 @@ namespace tnxqsoClient
             FSettings fs = new FSettings( config.data);
             if ( fs.ShowDialog(this) == DialogResult.OK )
             {
-                fs.blOptionalColumns.ToList().ForEach(c =>
+                fs.blColumns.Where( x => !x.isUser).ToList().ForEach(c =>
                {
                    config.data.setOptionalColumnValue(c.name, c.value);
                    config.data.optionalColumns[c.name].show = c.show;
                    dgvQSO.Columns[c.name].Visible = c.show;
                });
                 config.data.userColumns.Clear();
-                config.data.userColumns.AddRange(fs.blUserColumns);
+                config.data.userColumns.AddRange(
+                    fs.blColumns
+                        .Where(x => x.isUser)
+                        .Select( x => new UserColumnSettings {
+                            _name = x.name,
+                            _show = x.show,
+                            _value = x.value
+                        })
+                );
                 for (int c = 0; c < DXpConfig.UserColumnsCount; c++)
                     updateUserColumn(c);
                 if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsReaderWirelessGW != fs.gpsReaderWirelessGW)
@@ -432,7 +442,7 @@ namespace tnxqsoClient
     [DataContract]
     public class DXpConfig : StorableFormConfig
     {
-        static readonly string[] OptionalColumnsList = new string[] { "RDA", "RAFA", "WFF", "Loc" };
+        static readonly string[] OptionalColumnsList = new string[] { "RDA", "RAFA", "WFF", "Locator" };
         public static readonly int UserColumnsCount = 2;
 
         [XmlIgnore]

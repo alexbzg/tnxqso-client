@@ -16,18 +16,18 @@ namespace tnxqsoClient
     public partial class FSettings : Form
     {
 
-        
+        public class ColumnSettingsEntry : UserColumnSettings
+        {
+            public Boolean isUser = false;
+        }
 
         public string gpsReaderDeviceID {  get { return cbGPSPort.SelectedIndex == -1 ? null : serialPorts[cbGPSPort.SelectedIndex].deviceID; } }
         public bool gpsReaderWirelessGW { get { return rbGPSWirelessGW.Checked; } }
 
         List<SerialDeviceInfo> serialPorts = GPSReader.listSerialDevices();
 
-        public BindingList<UserColumnSettings> blOptionalColumns = new BindingList<UserColumnSettings>();
-        BindingSource bsOptionalColumns;
-
-        public BindingList<UserColumnSettings> blUserColumns = new BindingList<UserColumnSettings>();
-        BindingSource bsUserColumns;
+        public BindingList<ColumnSettingsEntry> blColumns = new BindingList<ColumnSettingsEntry>();
+        BindingSource bsColumns;
 
         public FSettings( DXpConfig data )
         {
@@ -47,40 +47,40 @@ namespace tnxqsoClient
             rbGPSWirelessGW.Checked = data.gpsReaderWirelessGW;
             cbGPSPort.Enabled = !data.gpsReaderWirelessGW;
 
-            bsOptionalColumns = new BindingSource(blOptionalColumns, null);
-            dgvOptionalColumns.AutoGenerateColumns = false;
-            dgvOptionalColumns.DataSource = bsOptionalColumns;
+            bsColumns = new BindingSource(blColumns, null);
+            dgvColumns.AutoGenerateColumns = false;
+            dgvColumns.DataSource = bsColumns;
 
             foreach (KeyValuePair<string, OptionalColumnSettings> kv in data.optionalColumns)
-                blOptionalColumns.Add(new UserColumnSettings
+                blColumns.Add(new ColumnSettingsEntry
                 {
                     _name = kv.Key,
                     _show = kv.Value.show,
                     _value = kv.Value.value
                 });
 
-            dgvOptionalColumns.Refresh();
-
-            bsUserColumns = new BindingSource(blUserColumns, null);
-            dgvUserColumns.AutoGenerateColumns = false;
-            dgvUserColumns.DataSource = bsUserColumns;
-
             foreach (UserColumnSettings c in data.userColumns)
-                blUserColumns.Add(new UserColumnSettings
+                blColumns.Add(new ColumnSettingsEntry
                 {
                     _name = c.name,
                     _show = c.show,
-                    _value = c.value
+                    _value = c.value,
+                    isUser = true
                 });
-            updateAllowAddUserColumns();
 
-            dgvUserColumns.Refresh();
+            for ( int c = data.userColumns.Count; c < DXpConfig.UserColumnsCount; c++)
+                blColumns.Add(new ColumnSettingsEntry
+                {
+                    _name = "User field #" + (c + 1).ToString(),
+                    _show = false,
+                    _value = null,
+                    isUser = true
+                });
 
-        }
+            dgvColumns.Height = dgvColumns.ColumnHeadersHeight + dgvColumns.Rows.Cast<DataGridViewRow>().Sum(x => x.Height) + 8;
 
-        private void updateAllowAddUserColumns()
-        {
-            dgvUserColumns.AllowUserToAddRows = blUserColumns.Count < DXpConfig.UserColumnsCount;
+            dgvColumns.Refresh();
+
         }
 
         private void rbGPSSource_Click(object sender, EventArgs e)
@@ -91,23 +91,18 @@ namespace tnxqsoClient
             cbGPSPort.Enabled = rbGPSSerial.Checked;
         }
 
-        private void dgvColumns_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dgvColumns_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-
-        }
-
-        private void dgvUserColumns_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-        }
-
-        private void dgvUserColumns_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
-        {
-            updateAllowAddUserColumns();
-        }
-
-        private void dgvUserColumns_RowValidated(object sender, DataGridViewCellEventArgs e)
-        {
-            updateAllowAddUserColumns();
+            for (int c = 0; c < blColumns.Count; c++)
+                if (!blColumns[c].isUser)
+                    {
+                        DataGridViewCell cell = dgvColumns.Rows[c].Cells["name"];
+                        cell.ReadOnly = true;
+                        DataGridViewCellStyle style = new DataGridViewCellStyle();
+                        style.BackColor = SystemColors.Control;
+                        style.ForeColor = SystemColors.ControlText;
+                        cell.Style = style;
+                    }
         }
     }
 }

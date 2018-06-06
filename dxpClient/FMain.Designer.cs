@@ -173,9 +173,9 @@ namespace tnxqsoClient
             this.Freq,
             this.Mode,
             this.rda,
-            this.loc,
             this.rafa,
-            this.wff});
+            this.wff,
+            this.loc});
             this.dgvQSO.Location = new System.Drawing.Point(0, 27);
             this.dgvQSO.Name = "dgvQSO";
             this.dgvQSO.Size = new System.Drawing.Size(1179, 374);
@@ -239,8 +239,8 @@ namespace tnxqsoClient
             // loc
             // 
             this.loc.DataPropertyName = "loc";
-            this.loc.HeaderText = "Loc";
-            this.loc.Name = "Loc";
+            this.loc.HeaderText = "Locator";
+            this.loc.Name = "Locator";
             // 
             // rafa
             // 
