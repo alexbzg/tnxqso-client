@@ -271,5 +271,13 @@ namespace GPSReaderNS
                 }
             }
         }
+
+        public void debugCoords( double[] _c )
+        {
+            _coords.setLat(_c[0]);
+            _coords.setLng(_c[1]);
+            System.Diagnostics.Debug.WriteLine("New location: " + _coords.ToString());
+            locationChanged?.Invoke(this, new EventArgs());
+        }
     }
 }

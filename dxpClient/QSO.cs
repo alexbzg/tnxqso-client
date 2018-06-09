@@ -181,7 +181,7 @@ namespace tnxqsoClient
                 _rda = settings.optionalColumns["RDA"].value,
                 _rafa = settings.optionalColumns["RAFA"].value,
                 _wff = settings.optionalColumns["WFF"].value,
-                _loc = settings.optionalColumns["Loc"].value,
+                _loc = settings.optionalColumns["Locator"].value,
                 _userFields = userFields
             };
         }

@@ -30,9 +30,10 @@ namespace tnxqsoClient
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FMain));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
-            this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.miLogin = new System.Windows.Forms.ToolStripMenuItem();
+            this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miExportRDA = new System.Windows.Forms.ToolStripMenuItem();
             this.miExportRAFA = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,10 +51,10 @@ namespace tnxqsoClient
             this.myRST = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Freq = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Mode = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.rda = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.loc = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.rafa = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.wff = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.RDA = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.RAFA = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.WFF = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Locator = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.slConnection = new System.Windows.Forms.ToolStripStatusLabel();
             this.slCoords = new System.Windows.Forms.ToolStripStatusLabel();
@@ -80,19 +81,19 @@ namespace tnxqsoClient
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip";
             // 
-            // miSettings
-            // 
-            this.miSettings.Name = "miSettings";
-            this.miSettings.Size = new System.Drawing.Size(61, 23);
-            this.miSettings.Text = "Settings";
-            this.miSettings.Click += new System.EventHandler(this.miSettings_Click);
-            // 
             // miLogin
             // 
             this.miLogin.Name = "miLogin";
             this.miLogin.Size = new System.Drawing.Size(49, 23);
             this.miLogin.Text = "Login";
             this.miLogin.Click += new System.EventHandler(this.miLogin_Click);
+            // 
+            // miSettings
+            // 
+            this.miSettings.Name = "miSettings";
+            this.miSettings.Size = new System.Drawing.Size(61, 23);
+            this.miSettings.Text = "Settings";
+            this.miSettings.Click += new System.EventHandler(this.miSettings_Click);
             // 
             // exportToolStripMenuItem
             // 
@@ -172,10 +173,10 @@ namespace tnxqsoClient
             this.myRST,
             this.Freq,
             this.Mode,
-            this.rda,
-            this.rafa,
-            this.wff,
-            this.loc});
+            this.RDA,
+            this.RAFA,
+            this.WFF,
+            this.Locator});
             this.dgvQSO.Location = new System.Drawing.Point(0, 27);
             this.dgvQSO.Name = "dgvQSO";
             this.dgvQSO.Size = new System.Drawing.Size(1179, 374);
@@ -230,29 +231,29 @@ namespace tnxqsoClient
             this.Mode.HeaderText = "Mode";
             this.Mode.Name = "Mode";
             // 
-            // rda
+            // RDA
             // 
-            this.rda.DataPropertyName = "rda";
-            this.rda.HeaderText = "RDA";
-            this.rda.Name = "RDA";
+            this.RDA.DataPropertyName = "rda";
+            this.RDA.HeaderText = "RDA";
+            this.RDA.Name = "RDA";
             // 
-            // loc
+            // RAFA
             // 
-            this.loc.DataPropertyName = "loc";
-            this.loc.HeaderText = "Locator";
-            this.loc.Name = "Locator";
+            this.RAFA.DataPropertyName = "rafa";
+            this.RAFA.HeaderText = "RAFA";
+            this.RAFA.Name = "RAFA";
             // 
-            // rafa
+            // WFF
             // 
-            this.rafa.DataPropertyName = "rafa";
-            this.rafa.HeaderText = "RAFA";
-            this.rafa.Name = "RAFA";
+            this.WFF.DataPropertyName = "wff";
+            this.WFF.HeaderText = "WFF";
+            this.WFF.Name = "WFF";
             // 
-            // wff
+            // Locator
             // 
-            this.wff.DataPropertyName = "wff";
-            this.wff.HeaderText = "WFF";
-            this.wff.Name = "WFF";
+            this.Locator.DataPropertyName = "loc";
+            this.Locator.HeaderText = "Locator";
+            this.Locator.Name = "Locator";
             // 
             // statusStrip
             // 
@@ -301,6 +302,7 @@ namespace tnxqsoClient
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.dgvQSO);
             this.Controls.Add(this.menuStrip);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FMain";
             this.Text = "QSO Client";
@@ -335,10 +337,6 @@ namespace tnxqsoClient
         private System.Windows.Forms.DataGridViewTextBoxColumn myRST;
         private System.Windows.Forms.DataGridViewTextBoxColumn Freq;
         private System.Windows.Forms.DataGridViewTextBoxColumn Mode;
-        private System.Windows.Forms.DataGridViewTextBoxColumn rda;
-        private System.Windows.Forms.DataGridViewTextBoxColumn loc;
-        private System.Windows.Forms.DataGridViewTextBoxColumn rafa;
-        private System.Windows.Forms.DataGridViewTextBoxColumn wff;
         private System.Windows.Forms.ToolStripStatusLabel slLoc;
         private System.Windows.Forms.ToolStripTextBox tbCSFilter;
         private System.Windows.Forms.ToolStripMenuItem miFilter;
@@ -349,6 +347,10 @@ namespace tnxqsoClient
         private System.Windows.Forms.ToolStripMenuItem miStats;
         private System.Windows.Forms.ToolStripMenuItem miStatsRDA;
         private System.Windows.Forms.ToolStripMenuItem miStatsRAFA;
+        private System.Windows.Forms.DataGridViewTextBoxColumn RDA;
+        private System.Windows.Forms.DataGridViewTextBoxColumn RAFA;
+        private System.Windows.Forms.DataGridViewTextBoxColumn WFF;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Locator;
     }
 }
 

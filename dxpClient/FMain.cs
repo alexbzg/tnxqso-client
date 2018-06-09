@@ -16,11 +16,14 @@ using System.Runtime.Serialization;
 using GPSReaderNS;
 using System.IO;
 using System.Diagnostics;
+using AutoUpdaterDotNET;
+using System.Reflection;
 
 namespace tnxqsoClient
 {
     public partial class FMain : FormWStorableState<DXpConfig>
     {
+        static readonly string AutoUpdaterURI = "http://tnxqso.com/static/files/qsoclient.xml";
         UDPListener udpListener = new UDPListener();
         QSOFactory qsoFactory;
         HTTPService http;
@@ -100,6 +103,7 @@ namespace tnxqsoClient
             startGPSReader();
             http = new HTTPService( gpsReader, config.data);
             http.connectionStateChanged += onHTTPConnection;
+
         }
 
         public void updateUserColumn( int c)
@@ -167,14 +171,15 @@ namespace tnxqsoClient
                     gpsReader.listenPort(portName);
                 }
             }
+            //gpsReader.debugCoords(new double[] { 47.2738544, 39.715804483333336 });
         }
 
         private void locationChanged( object sender, EventArgs e )
         {
-            config.data.setOptionalColumnValue( "Loc", DXpConfig.qth(gpsReader.coords) );
+            config.data.setOptionalColumnValue( "Locator", DXpConfig.qth(gpsReader.coords) );
             config.write();
             slCoords.Text = gpsReader.coords.ToString();
-            slLoc.Text = config.data.optionalColumns["Loc"].value;
+            slLoc.Text = config.data.optionalColumns["Locator"].value;
             if (config.data.optionalColumns["RAFA"].value != null)
                 slLoc.Text += " RAFA " + config.data.optionalColumns["RAFA"].value;
         }
@@ -297,6 +302,7 @@ namespace tnxqsoClient
 
         private void FMain_Load(object sender, EventArgs e)
         {
+            AutoUpdater.Start(AutoUpdaterURI);
             if (blQSO.Count > 0)
             {
                 dgvQSO.FirstDisplayedScrollingRowIndex = 0;
@@ -306,6 +312,7 @@ namespace tnxqsoClient
                 dgvQSO.Columns[kv.Key].Visible = kv.Value.show;
             if (config.data.token == null)
                 showLoginForm();
+            Text += " " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private void tbCSFilter_TextChanged(object sender, EventArgs e)
@@ -470,7 +477,7 @@ namespace tnxqsoClient
             if (optionalColumns[column].value != value)
             {
                 optionalColumns[column].value = value;
-                if ( column == "Loc")
+                if ( column == "Locator")
                 {
                     string newRafa = rafaData.ContainsKey(value) ? rafaData[value] : null;
                     setOptionalColumnValue("RAFA", newRafa);

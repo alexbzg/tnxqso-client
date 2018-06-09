@@ -36,9 +36,9 @@
             this.rbGPSWirelessGW = new System.Windows.Forms.RadioButton();
             this.rbGPSSerial = new System.Windows.Forms.RadioButton();
             this.dgvColumns = new System.Windows.Forms.DataGridView();
-            this.Show = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colShow = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label1 = new System.Windows.Forms.Label();
             this.gbGPS.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColumns)).BeginInit();
@@ -132,9 +132,9 @@
             this.dgvColumns.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvColumns.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvColumns.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Show,
-            this.name,
-            this.Value});
+            this.colShow,
+            this.colName,
+            this.colValue});
             this.dgvColumns.Location = new System.Drawing.Point(9, 125);
             this.dgvColumns.Name = "dgvColumns";
             this.dgvColumns.RowHeadersVisible = false;
@@ -144,24 +144,24 @@
             // 
             // Show
             // 
-            this.Show.DataPropertyName = "show";
-            this.Show.HeaderText = "Show";
-            this.Show.Name = "Show";
-            this.Show.Width = 50;
+            this.colShow.DataPropertyName = "show";
+            this.colShow.HeaderText = "Show";
+            this.colShow.Name = "Show";
+            this.colShow.Width = 50;
             // 
             // name
             // 
-            this.name.DataPropertyName = "name";
-            this.name.HeaderText = "Column";
-            this.name.Name = "name";
-            this.name.Width = 150;
+            this.colName.DataPropertyName = "name";
+            this.colName.HeaderText = "Column";
+            this.colName.Name = "name";
+            this.colName.Width = 150;
             // 
             // Value
             // 
-            this.Value.DataPropertyName = "value";
-            this.Value.HeaderText = "Value";
-            this.Value.Name = "Value";
-            this.Value.Width = 350;
+            this.colValue.DataPropertyName = "value";
+            this.colValue.HeaderText = "Value";
+            this.colValue.Name = "Value";
+            this.colValue.Width = 350;
             // 
             // label1
             // 
@@ -205,12 +205,9 @@
         private System.Windows.Forms.RadioButton rbGPSWirelessGW;
         private System.Windows.Forms.RadioButton rbGPSSerial;
         private System.Windows.Forms.DataGridView dgvColumns;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ocColumnName;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn ocColumnShow;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ocColumnValue;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Show;
-        private System.Windows.Forms.DataGridViewTextBoxColumn name;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn colShow;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colValue;
     }
 }

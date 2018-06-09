@@ -282,7 +282,7 @@ namespace tnxqsoClient
             }
             set { } }
         [DataMember]
-        public string loc { get { return config.getOptionalColumnValue("Loc"); } set { } }
+        public string loc { get { return config.getOptionalColumnValue("Locator"); } set { } }
         [DataMember]
         public string rafa { get { return config.getOptionalColumnValue("RAFA"); } set { } }
         [DataMember]
