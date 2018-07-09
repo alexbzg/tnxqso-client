@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.bOK = new System.Windows.Forms.Button();
             this.bCancel = new System.Windows.Forms.Button();
             this.cbGPSPort = new System.Windows.Forms.ComboBox();
@@ -36,9 +36,9 @@
             this.rbGPSWirelessGW = new System.Windows.Forms.RadioButton();
             this.rbGPSSerial = new System.Windows.Forms.RadioButton();
             this.dgvColumns = new System.Windows.Forms.DataGridView();
-            this.colShow = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Show = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label1 = new System.Windows.Forms.Label();
             this.gbGPS.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColumns)).BeginInit();
@@ -51,7 +51,7 @@
             this.bOK.Location = new System.Drawing.Point(407, 296);
             this.bOK.Name = "bOK";
             this.bOK.Size = new System.Drawing.Size(75, 30);
-            this.bOK.TabIndex = 0;
+            this.bOK.TabIndex = 5;
             this.bOK.Text = "OK";
             this.bOK.UseVisualStyleBackColor = true;
             // 
@@ -62,7 +62,7 @@
             this.bCancel.Location = new System.Drawing.Point(488, 296);
             this.bCancel.Name = "bCancel";
             this.bCancel.Size = new System.Drawing.Size(75, 30);
-            this.bCancel.TabIndex = 1;
+            this.bCancel.TabIndex = 6;
             this.bCancel.Text = "Cancel";
             this.bCancel.UseVisualStyleBackColor = true;
             // 
@@ -74,7 +74,7 @@
             this.cbGPSPort.Location = new System.Drawing.Point(108, 21);
             this.cbGPSPort.Name = "cbGPSPort";
             this.cbGPSPort.Size = new System.Drawing.Size(438, 28);
-            this.cbGPSPort.TabIndex = 8;
+            this.cbGPSPort.TabIndex = 2;
             // 
             // gbGPS
             // 
@@ -86,7 +86,7 @@
             this.gbGPS.Location = new System.Drawing.Point(9, 6);
             this.gbGPS.Name = "gbGPS";
             this.gbGPS.Size = new System.Drawing.Size(555, 88);
-            this.gbGPS.TabIndex = 10;
+            this.gbGPS.TabIndex = 0;
             this.gbGPS.TabStop = false;
             this.gbGPS.Text = "GPS settings";
             // 
@@ -96,7 +96,7 @@
             this.rbGPSWirelessGW.Location = new System.Drawing.Point(6, 56);
             this.rbGPSWirelessGW.Name = "rbGPSWirelessGW";
             this.rbGPSWirelessGW.Size = new System.Drawing.Size(154, 24);
-            this.rbGPSWirelessGW.TabIndex = 1;
+            this.rbGPSWirelessGW.TabIndex = 3;
             this.rbGPSWirelessGW.TabStop = true;
             this.rbGPSWirelessGW.Text = "Wireless Gateway";
             this.rbGPSWirelessGW.UseVisualStyleBackColor = true;
@@ -108,7 +108,7 @@
             this.rbGPSSerial.Location = new System.Drawing.Point(6, 22);
             this.rbGPSSerial.Name = "rbGPSSerial";
             this.rbGPSSerial.Size = new System.Drawing.Size(99, 24);
-            this.rbGPSSerial.TabIndex = 0;
+            this.rbGPSSerial.TabIndex = 1;
             this.rbGPSSerial.TabStop = true;
             this.rbGPSSerial.Text = "Serial port";
             this.rbGPSSerial.UseVisualStyleBackColor = true;
@@ -122,46 +122,46 @@
             this.dgvColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvColumns.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvColumns.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvColumns.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvColumns.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.colShow,
-            this.colName,
-            this.colValue});
+            this.Show,
+            this.name,
+            this.Value});
             this.dgvColumns.Location = new System.Drawing.Point(9, 125);
             this.dgvColumns.Name = "dgvColumns";
             this.dgvColumns.RowHeadersVisible = false;
             this.dgvColumns.Size = new System.Drawing.Size(554, 160);
-            this.dgvColumns.TabIndex = 9;
+            this.dgvColumns.TabIndex = 4;
             this.dgvColumns.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvColumns_DataBindingComplete);
             // 
             // Show
             // 
-            this.colShow.DataPropertyName = "show";
-            this.colShow.HeaderText = "Show";
-            this.colShow.Name = "Show";
-            this.colShow.Width = 50;
+            this.Show.DataPropertyName = "show";
+            this.Show.HeaderText = "Show";
+            this.Show.Name = "Show";
+            this.Show.Width = 50;
             // 
             // name
             // 
-            this.colName.DataPropertyName = "name";
-            this.colName.HeaderText = "Column";
-            this.colName.Name = "name";
-            this.colName.Width = 150;
+            this.name.DataPropertyName = "name";
+            this.name.HeaderText = "Column";
+            this.name.Name = "name";
+            this.name.Width = 150;
             // 
             // Value
             // 
-            this.colValue.DataPropertyName = "value";
-            this.colValue.HeaderText = "Value";
-            this.colValue.Name = "Value";
-            this.colValue.Width = 350;
+            this.Value.DataPropertyName = "value";
+            this.Value.HeaderText = "Value";
+            this.Value.Name = "Value";
+            this.Value.Width = 350;
             // 
             // label1
             // 
@@ -209,5 +209,8 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn colShow;
         private System.Windows.Forms.DataGridViewTextBoxColumn colName;
         private System.Windows.Forms.DataGridViewTextBoxColumn colValue;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Show;
+        private System.Windows.Forms.DataGridViewTextBoxColumn name;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
     }
 }

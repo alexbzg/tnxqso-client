@@ -1,4 +1,4 @@
-﻿#define FAKE_GPS
+﻿//#define FAKE_GPS
 #define LOG_GPS
 using System;
 using System.Collections.Generic;
@@ -268,6 +268,8 @@ namespace GPSReaderNS
                 {
                     
                     System.Diagnostics.Debug.WriteLine(e.ToString());
+                    System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+                    System.Diagnostics.Debug.WriteLine(t.ToString());
                 }
             }
         }

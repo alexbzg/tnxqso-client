@@ -60,12 +60,12 @@ namespace tnxqsoClient
             pingTimer = new System.Threading.Timer(obj => ping(), null, 5000, pingInterval);
         }
 
-        private async Task<HttpContent> post(string _URI, JSONSerializable data)
+        private async Task<HttpResponseMessage> post(string _URI, JSONSerializable data)
         {
             return await post(_URI, data, true);
         }
 
-        private async Task<HttpContent> post(string _URI, JSONSerializable data, bool warnings)
+        private async Task<HttpResponseMessage> post(string _URI, JSONSerializable data, bool warnings)
         {
             string sContent = data.serialize();
             System.Diagnostics.Debug.WriteLine(sContent);
@@ -93,20 +93,18 @@ namespace tnxqsoClient
                     await processQueue();
                 connectionStateChanged?.Invoke(this, new EventArgs());
             }
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (response?.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 string srvMsg = await response.Content.ReadAsStringAsync();
                 if (srvMsg == "Login expired")
                 {
-                    if (config.callsign.Length > 3 && config.password.Length > 5 && await login(config.callsign, config.password))
+                    if (config.callsign.Length > 3 && config.password.Length > 5 && await login(config.callsign, config.password) == System.Net.HttpStatusCode.OK)
                         return await post(_URI, data, warnings);
                 }
                 if (warnings)
                     MessageBox.Show(await response.Content.ReadAsStringAsync(), "Bad request to server");
-                else
-                    response.EnsureSuccessStatusCode();
             }
-            return result ? response.Content : null;
+            return response;
         }
 
 
@@ -114,8 +112,8 @@ namespace tnxqsoClient
         {
             if (qsoQueue.IsEmpty && config.token != null)
             {
-                HttpContent response = await post("log", qsoToken( qso));
-                if (response == null)
+                HttpResponseMessage response = await post("log", qsoToken( qso));
+                if (response == null || !response.IsSuccessStatusCode)
                     addToQueue(qso);
             }
             else
@@ -138,8 +136,8 @@ namespace tnxqsoClient
             while (!qsoQueue.IsEmpty && config.token != null)
             {
                 qsoQueue.TryPeek(out QSO qso);
-                HttpContent r = await post("log", qsoToken( qso ));
-                if (r != null)
+                HttpResponseMessage r = await post("log", qsoToken( qso ));
+                if (r != null && r.IsSuccessStatusCode)
                 {
                     qsoQueue.TryDequeue(out qso);
                     saveUnsent();
@@ -163,33 +161,39 @@ namespace tnxqsoClient
         {
             if (config.token == null)
                 return;
-            HttpContent response  = await post("location", locationData );
-            pingTimer.Change( response != null ? pingInterval : 1000, pingInterval);
+            HttpResponseMessage response = await post("location", locationData );
+            pingTimer.Change( response != null && response.IsSuccessStatusCode ? pingInterval : 1000, pingInterval);
         }
 
-        public async Task<Boolean> login(string login, string password)
+        public async Task<System.Net.HttpStatusCode?> login(string login, string password)
         {
-            HttpContent response = await post("login", new LoginRequest() { login = login, password = password });
+            HttpResponseMessage response = await post("login", new LoginRequest() { login = login, password = password }, false);
             if (response != null )
             {
-                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LoginResponse));
-                LoginResponse userData = (LoginResponse)serializer.ReadObject(await response.ReadAsStreamAsync());
-                config.callsign = userData.callsign;
-                config.password = password;
-                config.token = userData.token;
-                schedulePingTimer();
-                Task.Run( () => processQueue());
-                Task.Run(() => postUserColumns());
-                return true;
+                if (response.IsSuccessStatusCode)
+                {
+                    DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LoginResponse));
+                    LoginResponse userData = (LoginResponse)serializer.ReadObject(await response.Content.ReadAsStreamAsync());
+                    config.callsign = userData.callsign;
+                    config.password = password;
+                    config.token = userData.token;
+                    schedulePingTimer();
+                    Task.Run(() => processQueue());
+                    Task.Run(() => postUserColumns());
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    MessageBox.Show(await response.Content.ReadAsStringAsync(), "Bad request to server");
+                }
             }
-            return false;
+            return response?.StatusCode;
         }
 
         public async Task postUserColumns()
         {
             if (config.token == null)
                 return;
-            HttpContent response = await post("userSettings", userColumnsData);
+            await post("userSettings", userColumnsData);
         }
 
         private QSOtoken qsoToken( QSO qso )

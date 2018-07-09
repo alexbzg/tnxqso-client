@@ -27,10 +27,15 @@ namespace tnxqsoClient
         {
             Enabled = false;
             UseWaitCursor = true;
-            if (await httpService.login(tbCallsign.Text, tbPassword.Text))
+            System.Net.HttpStatusCode? sc = await httpService.login(tbCallsign.Text, tbPassword.Text);
+            if (sc == System.Net.HttpStatusCode.OK)
+            {
                 DialogResult = DialogResult.OK;
-            else
+            } else if (sc != System.Net.HttpStatusCode.BadRequest)
+            {
                 MessageBox.Show("Login failed. Please try again later.");
+                DialogResult = DialogResult.Cancel;
+            }
             Enabled = true;
             UseWaitCursor = false;
         }

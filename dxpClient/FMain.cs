@@ -481,12 +481,12 @@ namespace tnxqsoClient
                 {
                     string newRafa = rafaData.ContainsKey(value) ? rafaData[value] : null;
                     setOptionalColumnValue("RAFA", newRafa);
-                    optionalColumnValueChanged?.Invoke(this, new OptionalColumnValueChangedEventArgs
-                    {
-                        column = column,
-                        value = value
-                    });
                 }
+                optionalColumnValueChanged?.Invoke(this, new OptionalColumnValueChangedEventArgs
+                {
+                    column = column,
+                    value = value
+                });
             }
 
         }
@@ -540,7 +540,7 @@ namespace tnxqsoClient
                             }
                         }
                     } while (sr.Peek() >= 0);
-
+                    System.Diagnostics.Debug.WriteLine(rafaData["KN97TF"]);
                 }
             }
             catch (Exception e)

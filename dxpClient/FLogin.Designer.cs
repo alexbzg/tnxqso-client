@@ -67,14 +67,14 @@
             this.tbCallsign.Location = new System.Drawing.Point(94, 5);
             this.tbCallsign.Name = "tbCallsign";
             this.tbCallsign.Size = new System.Drawing.Size(256, 26);
-            this.tbCallsign.TabIndex = 3;
+            this.tbCallsign.TabIndex = 1;
             // 
             // bLogin
             // 
             this.bLogin.Location = new System.Drawing.Point(182, 69);
             this.bLogin.Name = "bLogin";
             this.bLogin.Size = new System.Drawing.Size(75, 30);
-            this.bLogin.TabIndex = 4;
+            this.bLogin.TabIndex = 3;
             this.bLogin.Text = "Login";
             this.bLogin.UseVisualStyleBackColor = true;
             this.bLogin.Click += new System.EventHandler(this.bLogin_Click);
@@ -85,7 +85,7 @@
             this.bCancel.Location = new System.Drawing.Point(263, 69);
             this.bCancel.Name = "bCancel";
             this.bCancel.Size = new System.Drawing.Size(75, 30);
-            this.bCancel.TabIndex = 5;
+            this.bCancel.TabIndex = 4;
             this.bCancel.Text = "Cancel";
             this.bCancel.UseVisualStyleBackColor = true;
             // 
