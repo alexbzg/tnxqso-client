@@ -291,6 +291,10 @@ namespace tnxqsoClient
         public string rafa { get { return config.getOptionalColumnValue("RAFA"); } set { } }
         [DataMember]
         public string rda { get { return config.getOptionalColumnValue("RDA"); } set { } }
+        [DataMember]
+        public string wff { get { return config.getOptionalColumnValue("WFF"); } set { } }
+        [DataMember]
+        public string[] userFields { get { return config.getUserColumnsValues(); } set { } }
 
         internal LocationData(DXpConfig _config, GPSReader _gps) : base(_config)
         {

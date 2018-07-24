@@ -491,6 +491,14 @@ namespace tnxqsoClient
 
         }
 
+        public string[] getUserColumnsValues()
+        {
+            string[] r = new string[userColumns.Count];
+            for (int c = 0; c<r.Length; c++)
+                r[c] = userColumns[c].value;
+            return r;
+        }
+
         public string getOptionalColumnValue( string column )
         {
             if (optionalColumns != null && optionalColumns.ContainsKey(column) && optionalColumns[column] != null)

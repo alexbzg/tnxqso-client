@@ -160,17 +160,11 @@ namespace tnxqsoClient
             if (root.Name != "contactinfo")
                 return null;
 
-            string[] userFields = new string[settings.userColumns.Count];
-            for (int c = 0; c < userFields.Length; c++)
-                if (settings.userColumns[c].show)
-                    userFields[c] = settings.userColumns[c].value;
-
-
             return new QSO {
                 _ts = root.SelectSingleNode("timestamp").InnerText,
                 _myCS = root.SelectSingleNode("mycall").InnerText,
                 _band = root.SelectSingleNode("band").InnerText,
-                _freq = QSO.formatFreq(root.SelectSingleNode("txfreq").InnerText ),
+                _freq = QSO.formatFreq(root.SelectSingleNode("txfreq").InnerText),
                 _mode = root.SelectSingleNode("mode").InnerText,
                 _cs = root.SelectSingleNode("call").InnerText,
                 _snt = root.SelectSingleNode("snt").InnerText,
@@ -182,7 +176,7 @@ namespace tnxqsoClient
                 _rafa = settings.optionalColumns["RAFA"].value,
                 _wff = settings.optionalColumns["WFF"].value,
                 _loc = settings.optionalColumns["Locator"].value,
-                _userFields = userFields
+                _userFields = settings.getUserColumnsValues()
             };
         }
     }
