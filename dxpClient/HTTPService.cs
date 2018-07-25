@@ -19,7 +19,8 @@ namespace tnxqsoClient
 {
     public class HTTPService
     {
-        private static int pingInterval = 60 * 1000;
+        private static int pingIntervalDef = 60 * 1000;
+        private static int pingIntervalNoConnection = 5 * 1000;
         HttpClient client = new HttpClient();
 #if DEBUG
         private static readonly string srvURI = "http://test.tnxqso.com/aiohttp/";
@@ -57,7 +58,7 @@ namespace tnxqsoClient
 
         private void schedulePingTimer()
         {
-            pingTimer = new System.Threading.Timer(obj => ping(), null, 5000, pingInterval);
+            pingTimer = new System.Threading.Timer(obj => ping(), null, 5000, Timeout.Infinite);
         }
 
         private async Task<HttpResponseMessage> post(string _URI, JSONSerializable data)
@@ -162,7 +163,7 @@ namespace tnxqsoClient
             if (config.token == null)
                 return;
             HttpResponseMessage response = await post("location", locationData );
-            pingTimer.Change( response != null && response.IsSuccessStatusCode ? pingInterval : 1000, pingInterval);
+            pingTimer.Change( response != null && response.IsSuccessStatusCode ? pingIntervalDef : pingIntervalNoConnection, Timeout.Infinite);
         }
 
         public async Task<System.Net.HttpStatusCode?> login(string login, string password)
