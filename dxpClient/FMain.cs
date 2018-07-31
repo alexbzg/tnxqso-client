@@ -18,6 +18,7 @@ using System.IO;
 using System.Diagnostics;
 using AutoUpdaterDotNET;
 using System.Reflection;
+using AsyncConnectionNS;
 
 namespace tnxqsoClient
 {
@@ -98,12 +99,29 @@ namespace tnxqsoClient
                 ProtoBufSerialization.WriteList(qsoFilePath, storedQSOs, false);
             config.data.optionalColumnValueChanged += optionalColumnValueChanged;
             gpsReader.locationChanged += locationChanged;
+            gpsReader.gpsConnectionChanged += gpsConnectionChanged;
             config.data.logIO += onLoggedIO;
             onLoggedIO(null, null);
             startGPSReader();
             http = new HTTPService( gpsReader, config.data);
             http.connectionStateChanged += onHTTPConnection;
+            http.locationChanged += locationChanged;
 
+
+        }
+
+        private void gpsConnectionChanged(Object sender, DisconnectEventArgs e )
+        {
+            if (gpsReader.connected)
+            {
+                slCoords.Text = gpsReader.coords.ToString();
+                slCoords.ForeColor = SystemColors.ControlText;
+            }
+            else if (!config.data.gpsServerLoad)
+            {
+                slCoords.Text = "No GPS connection";
+                slCoords.ForeColor = Color.Red;
+            }
         }
 
         public void updateUserColumn( int c)
@@ -161,7 +179,7 @@ namespace tnxqsoClient
         {
             if (config.data.gpsReaderWirelessGW)
                 gpsReader.listenWirelessGW();
-            else
+            else if (config.data.gpsReaderDeviceID != null)
             {
                 List<SerialDeviceInfo> ports = GPSReader.listSerialDevices();
                 SerialDeviceInfo port = ports.FirstOrDefault(x => x.deviceID == config.data.gpsReaderDeviceID);
@@ -171,14 +189,22 @@ namespace tnxqsoClient
                     gpsReader.listenPort(portName);
                 }
             }
+            else
+            {
+                gpsReader.stop();
+                DoInvoke(() => {
+                    slCoords.ForeColor = SystemColors.ControlText;
+                    slCoords.Text = "No GPS data";
+                });
+            }
             //gpsReader.debugCoords(new double[] { 47.2738544, 39.715804483333336 });
         }
 
-        private void locationChanged( object sender, EventArgs e )
+        private void locationChanged( object sender, LocationChangedEventArgs e )
         {
-            config.data.setOptionalColumnValue( "Locator", DXpConfig.qth(gpsReader.coords) );
+            config.data.setOptionalColumnValue( "Locator", DXpConfig.qth(e.coords) );
             config.write();
-            slCoords.Text = gpsReader.coords.ToString();
+            slCoords.Text = e.coords.ToString();
             slLoc.Text = config.data.optionalColumns["Locator"].value;
             if (config.data.optionalColumns["RAFA"].value != null)
                 slLoc.Text += " RAFA " + config.data.optionalColumns["RAFA"].value;
@@ -289,10 +315,12 @@ namespace tnxqsoClient
                 );
                 for (int c = 0; c < DXpConfig.UserColumnsCount; c++)
                     updateUserColumn(c);
-                if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsReaderWirelessGW != fs.gpsReaderWirelessGW)
+                if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsReaderWirelessGW != fs.gpsReaderWirelessGW || 
+                    config.data.gpsServerLoad != fs.gpsServerLoad)
                 {
                     config.data.gpsReaderWirelessGW = fs.gpsReaderWirelessGW;
                     config.data.gpsReaderDeviceID = fs.gpsReaderDeviceID;
+                    config.data.gpsServerLoad = fs.gpsServerLoad;
                     startGPSReader();
                 }
                 config.write();
@@ -459,6 +487,7 @@ namespace tnxqsoClient
             set { _gpsReaderDeviceID = value; }
         }
         public bool gpsReaderWirelessGW;
+        public bool gpsServerLoad;
 
         [DataMember]
         public SerializableDictionary<string, OptionalColumnSettings> optionalColumns = new SerializableDictionary<string, OptionalColumnSettings>();

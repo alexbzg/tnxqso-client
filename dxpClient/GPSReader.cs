@@ -74,6 +74,11 @@ namespace GPSReaderNS
         internal string lngD;
     }
 
+    public class LocationChangedEventArgs : EventArgs
+    {
+        public Coords coords;
+    }
+
     public class GPSReader
     {
         private static Regex portRE = new Regex(@"(?<=\()COM\d+(?=\))");
@@ -111,7 +116,15 @@ namespace GPSReaderNS
 
         public Coords coords { get { return _coords; } }
         volatile StringBuilder sb = new StringBuilder();
-        public EventHandler<EventArgs> locationChanged;
+        public EventHandler<LocationChangedEventArgs> locationChanged;
+        public EventHandler<DisconnectEventArgs> gpsConnectionChanged;
+        public bool connected
+        {
+            get
+            {
+                return (bool)(listenWirelessGWFl ? gpsShare?.connected : sport?.IsOpen);
+            }
+        }
 
         public GPSReader()
         {
@@ -154,9 +167,20 @@ namespace GPSReaderNS
 
         }
 
-        public void listenWirelessGW()
+        public void stop()
         {
             sport?.Close();
+            if (listenWirelessGWFl)
+            {
+                listenWirelessGWFl = false;
+                wirelessGWCheckTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+                gpsShare?.disconnect();
+            }
+        }
+
+        public void listenWirelessGW()
+        {
+            stop();
             listenWirelessGWFl = true;
             if ( wirelessGWCheckTimer == null )
                 wirelessGWCheckTimer = new System.Threading.Timer(obj => {
@@ -176,6 +200,8 @@ namespace GPSReaderNS
                             gpsShare.connect(ni.GetIPProperties().GatewayAddresses[0].Address.ToString(), 50000, true);
                             gpsShare.reconnect = true;
                             gpsShare.lineReceived += GpsShare_lineReceived;
+                            gpsShare.onDisconnected += GpsShare_onDisconnected;
+                            gpsShare.onConnected += GpsShare_onConnected;
                         }
                     } else if (gpsShare != null)
                     {
@@ -186,14 +212,19 @@ namespace GPSReaderNS
             }
         }
 
+        private void GpsShare_onConnected(object sender, EventArgs e)
+        {
+            gpsConnectionChanged?.Invoke( this, null);
+        }
+
+        private void GpsShare_onDisconnected(object sender, DisconnectEventArgs e)
+        {
+            gpsConnectionChanged?.Invoke(this, e);
+        }
+
         public void listenPort(string portName)
         {
-            if ( listenWirelessGWFl )
-            {
-                listenWirelessGWFl = false;
-                wirelessGWCheckTimer?.Change(Timeout.Infinite, Timeout.Infinite);
-                gpsShare?.disconnect();
-            }
+            stop();
             if (sport?.PortName != portName)
             {
                 sport?.Close();
@@ -203,6 +234,7 @@ namespace GPSReaderNS
                 {
                     SerialPortFixer.Execute(portName);
                     sport.Open();
+                    gpsConnectionChanged?.Invoke(this, null );
                 }
                 catch (Exception e)
                 {
@@ -261,7 +293,7 @@ namespace GPSReaderNS
                         _coords.setLat(nLat);
                         _coords.setLng(nLng);
                         System.Diagnostics.Debug.WriteLine("New location: " + _coords.ToString());
-                        locationChanged?.Invoke(this, new EventArgs());
+                        locationChanged?.Invoke(this, new LocationChangedEventArgs() { coords = coords });
                     }
                 }
                 catch (Exception e)
@@ -279,7 +311,7 @@ namespace GPSReaderNS
             _coords.setLat(_c[0]);
             _coords.setLng(_c[1]);
             System.Diagnostics.Debug.WriteLine("New location: " + _coords.ToString());
-            locationChanged?.Invoke(this, new EventArgs());
+            locationChanged?.Invoke(this, new LocationChangedEventArgs() { coords = coords });
         }
     }
 }

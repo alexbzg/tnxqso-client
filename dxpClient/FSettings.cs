@@ -23,6 +23,7 @@ namespace tnxqsoClient
 
         public string gpsReaderDeviceID {  get { return cbGPSPort.SelectedIndex == -1 ? null : serialPorts[cbGPSPort.SelectedIndex].deviceID; } }
         public bool gpsReaderWirelessGW { get { return rbGPSWirelessGW.Checked; } }
+        public bool gpsServerLoad { get { return rbGPSServerLoad.Checked; } }
 
         List<SerialDeviceInfo> serialPorts = GPSReader.listSerialDevices();
 
@@ -45,6 +46,7 @@ namespace tnxqsoClient
                 cbGPSPort.SelectedIndex = portIdx;
             rbGPSSerial.Checked = !data.gpsReaderWirelessGW;
             rbGPSWirelessGW.Checked = data.gpsReaderWirelessGW;
+            rbGPSServerLoad.Checked = data.gpsServerLoad;
             cbGPSPort.Enabled = !data.gpsReaderWirelessGW;
 
             bsColumns = new BindingSource(blColumns, null);
@@ -103,6 +105,11 @@ namespace tnxqsoClient
                         style.ForeColor = SystemColors.ControlText;
                         cell.Style = style;
                     }
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

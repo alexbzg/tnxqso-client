@@ -23,37 +23,38 @@ namespace tnxqsoClient
         private static int pingIntervalNoConnection = 5 * 1000;
         HttpClient client = new HttpClient();
 #if DEBUG
-        private static readonly string srvURI = "http://test.tnxqso.com/aiohttp/";
+        private static readonly Uri srvURI = new Uri("http://test.tnxqso.com/aiohttp/");
 #else
-        private static readonly string srvURI = "http://tnxqso.com/aiohttp/";
+        private static readonly Uri srvURI = new Uri("http://tnxqso.com/aiohttp/");
 #endif
         System.Threading.Timer pingTimer;
         ConcurrentQueue<QSO> qsoQueue = new ConcurrentQueue<QSO>();
         private string unsentFilePath = Application.StartupPath + "\\unsent.dat";
+        private string stationCallsign = null;
         private volatile bool _connected;
-        public bool connected {  get { return _connected; } }
+        public bool connected { get { return _connected; } }
         public EventHandler<EventArgs> connectionStateChanged;
+        public Coords coords = new Coords();
         private GPSReader gpsReader;
         private DXpConfig config;
-        volatile LocationData locationData;
         volatile UserColumnsData userColumnsData;
+        public EventHandler<LocationChangedEventArgs> locationChanged;
 
 
-        public HTTPService( GPSReader _gpsReader, DXpConfig _config )
+        public HTTPService(GPSReader _gpsReader, DXpConfig _config)
         {
             gpsReader = _gpsReader;
             config = _config;
-            locationData = new LocationData(config, gpsReader);
             userColumnsData = new UserColumnsData(config);
             schedulePingTimer();
             List<QSO> unsentQSOs = ProtoBufSerialization.Read<List<QSO>>(unsentFilePath);
             if (unsentQSOs != null && unsentQSOs.Count > 0)
-                Task.Run( () =>
-                {
-                    foreach (QSO qso in unsentQSOs)
-                        postQso(qso);
-                    saveUnsent();
-                });
+                Task.Run(() =>
+               {
+                   foreach (QSO qso in unsentQSOs)
+                       postQso(qso);
+                   saveUnsent();
+               });
         }
 
         private void schedulePingTimer()
@@ -87,7 +88,7 @@ namespace tnxqsoClient
             {
                 System.Diagnostics.Debug.WriteLine(e.ToString());
             }
-            if (_connected != result )
+            if (_connected != result)
             {
                 _connected = result;
                 if (_connected)
@@ -109,11 +110,11 @@ namespace tnxqsoClient
         }
 
 
-        public async Task postQso( QSO qso)
+        public async Task postQso(QSO qso)
         {
             if (qsoQueue.IsEmpty && config.token != null)
             {
-                HttpResponseMessage response = await post("log", qsoToken( qso));
+                HttpResponseMessage response = await post("log", qsoToken(qso));
                 if (response == null || !response.IsSuccessStatusCode)
                     addToQueue(qso);
             }
@@ -121,7 +122,7 @@ namespace tnxqsoClient
                 addToQueue(qso);
         }
 
-        private void addToQueue( QSO qso)
+        private void addToQueue(QSO qso)
         {
             qsoQueue.Enqueue(qso);
             saveUnsent();
@@ -137,7 +138,7 @@ namespace tnxqsoClient
             while (!qsoQueue.IsEmpty && config.token != null)
             {
                 qsoQueue.TryPeek(out QSO qso);
-                HttpResponseMessage r = await post("log", qsoToken( qso ));
+                HttpResponseMessage r = await post("log", qsoToken(qso));
                 if (r != null && r.IsSuccessStatusCode)
                 {
                     qsoQueue.TryDequeue(out qso);
@@ -153,23 +154,55 @@ namespace tnxqsoClient
             return val == null || val == "" ? "null" : "\"" + val + "\"";
         }
 
-        private static string JSONfield( string val )
+        private static string JSONfield(string val)
         {
             return val == null || val == "" ? "null" : val;
+        }
+
+        public async Task getLocation()
+        {
+            Uri statusUri = new Uri(srvURI.Scheme + "://" + srvURI.Host + "/static/stations/" + stationCallsign + "/status.json");
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(statusUri);
+                System.Diagnostics.Debug.WriteLine(response.ToString());
+                if (response.IsSuccessStatusCode)
+                {
+                    DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LocationResponse));
+                    double[] location = ((LocationResponse)serializer.ReadObject(await response.Content.ReadAsStreamAsync())).location;
+                    if (location != null && ( location[0] != coords.lat || location[1] != coords.lng))
+                    {
+                        coords.setLat(location[0]);
+                        coords.setLng(location[1]);
+                        System.Diagnostics.Debug.WriteLine("New location: " + coords.ToString());
+                        locationChanged?.Invoke(this, new LocationChangedEventArgs() { coords = coords });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
         }
 
         public async Task ping()
         {
             if (config.token == null)
                 return;
-            HttpResponseMessage response = await post("location", locationData );
-            pingTimer.Change( response != null && response.IsSuccessStatusCode ? pingIntervalDef : pingIntervalNoConnection, Timeout.Infinite);
+            HttpResponseMessage response = await post("location", new LocationData(config, config.gpsServerLoad ? coords : gpsReader.coords));
+            if (config.gpsServerLoad)
+            {
+                if (stationCallsign != null)
+                    await getLocation();
+                await getUserData();
+            }
+            pingTimer.Change(response != null && response.IsSuccessStatusCode ? pingIntervalDef : pingIntervalNoConnection, Timeout.Infinite);
         }
 
         public async Task<System.Net.HttpStatusCode?> login(string login, string password)
         {
             HttpResponseMessage response = await post("login", new LoginRequest() { login = login, password = password }, false);
-            if (response != null )
+            if (response != null)
             {
                 if (response.IsSuccessStatusCode)
                 {
@@ -190,6 +223,22 @@ namespace tnxqsoClient
             return response?.StatusCode;
         }
 
+        private async Task<System.Net.HttpStatusCode?> getUserData()
+        {
+            HttpResponseMessage response = await post("userData", new JSONToken(config), false);
+            if (response != null)
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(UserDataResponse));
+                    UserDataResponse userData = (UserDataResponse)serializer.ReadObject(await response.Content.ReadAsStreamAsync());
+                    stationCallsign = userData.settings.station.callsign.ToLower().Replace( '/', '-' );
+                }
+            }
+            return response?.StatusCode;
+        }
+
+
         public async Task postUserColumns()
         {
             if (config.token == null)
@@ -197,7 +246,7 @@ namespace tnxqsoClient
             await post("userSettings", userColumnsData);
         }
 
-        private QSOtoken qsoToken( QSO qso )
+        private QSOtoken qsoToken(QSO qso)
         {
             return new QSOtoken(config, qso);
         }
@@ -235,9 +284,9 @@ namespace tnxqsoClient
         [IgnoreDataMember]
         internal DXpConfig config;
         [DataMember]
-        internal string token { get { return config.token; }  set { } }
+        internal string token { get { return config.token; } set { } }
 
-        public JSONToken( DXpConfig _config)
+        public JSONToken(DXpConfig _config)
         {
             config = _config;
         }
@@ -253,12 +302,41 @@ namespace tnxqsoClient
     }
 
     [DataContract]
+    public class LocationResponse
+    {
+        [DataMember]
+        public double[] location;
+    }
+
+    [DataContract]
     public class LoginResponse
     {
         [DataMember]
         public string token;
         [DataMember]
         public string callsign;
+    }
+
+    [DataContract]
+    public class StationSettings
+    {
+        [DataMember]
+        public string callsign;
+    }
+
+    [DataContract]
+    public class UserSettings
+    {
+        [DataMember]
+        public StationSettings station;
+    }
+
+
+    [DataContract]
+    public class UserDataResponse
+    {
+        [DataMember]
+        public UserSettings settings;
     }
 
     [DataContract]
@@ -277,11 +355,11 @@ namespace tnxqsoClient
     class LocationData : JSONToken
     {
         [IgnoreDataMember]
-        GPSReader gps;
+        Coords coords;
         [DataMember]
         public double[] location { get {
-                if ((bool)gps?.coords?.valid)
-                    return new double[] { gps.coords.lat, gps.coords.lng };
+                if ((bool)coords?.valid)
+                    return new double[] { coords.lat, coords.lng };
                 else
                     return null;
             }
@@ -297,9 +375,9 @@ namespace tnxqsoClient
         [DataMember]
         public string[] userFields { get { return config.getUserColumnsValues(); } set { } }
 
-        internal LocationData(DXpConfig _config, GPSReader _gps) : base(_config)
+        internal LocationData(DXpConfig _config, Coords _coords) : base(_config)
         {
-            gps = _gps;
+            coords = _coords;  
         }
 
     }
