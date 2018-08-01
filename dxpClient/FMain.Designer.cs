@@ -303,11 +303,13 @@ namespace tnxqsoClient
             this.Controls.Add(this.dgvQSO);
             this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FMain";
             this.Text = "QSO Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FMain_FormClosing);
             this.Load += new System.EventHandler(this.FMain_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FMain_KeyDown);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQSO)).EndInit();

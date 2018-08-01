@@ -122,7 +122,8 @@ namespace GPSReaderNS
         {
             get
             {
-                return (bool)(listenWirelessGWFl ? gpsShare?.connected : sport?.IsOpen);
+                bool? r = (bool?)(listenWirelessGWFl ? gpsShare?.connected : sport?.IsOpen);
+                return r == null ? false : (bool)r;
             }
         }
 
@@ -169,7 +170,12 @@ namespace GPSReaderNS
 
         public void stop()
         {
+            stopListenWirelessGW();
             sport?.Close();
+        }
+
+        private void  stopListenWirelessGW()
+        {
             if (listenWirelessGWFl)
             {
                 listenWirelessGWFl = false;
@@ -180,7 +186,7 @@ namespace GPSReaderNS
 
         public void listenWirelessGW()
         {
-            stop();
+            sport?.Close();
             listenWirelessGWFl = true;
             if ( wirelessGWCheckTimer == null )
                 wirelessGWCheckTimer = new System.Threading.Timer(obj => {
@@ -224,7 +230,7 @@ namespace GPSReaderNS
 
         public void listenPort(string portName)
         {
-            stop();
+            stopListenWirelessGW();
             if (sport?.PortName != portName)
             {
                 sport?.Close();

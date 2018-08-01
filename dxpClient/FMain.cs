@@ -112,16 +112,22 @@ namespace tnxqsoClient
 
         private void gpsConnectionChanged(Object sender, DisconnectEventArgs e )
         {
-            if (gpsReader.connected)
-            {
-                slCoords.Text = gpsReader.coords.ToString();
-                slCoords.ForeColor = SystemColors.ControlText;
-            }
-            else if (!config.data.gpsServerLoad)
-            {
-                slCoords.Text = "No GPS connection";
-                slCoords.ForeColor = Color.Red;
-            }
+            DoInvoke(() =>
+           {
+               if (gpsReader.connected)
+               {
+                   string text = gpsReader.coords.ToString();
+                   if (text == null)
+                       text = "No GPS data";
+                   slCoords.Text = text;
+                   slCoords.ForeColor = SystemColors.ControlText;
+               }
+               else if (!config.data.gpsServerLoad)
+               {
+                   slCoords.Text = "No GPS connection";
+                   slCoords.ForeColor = Color.Red;
+               }
+           });
         }
 
         public void updateUserColumn( int c)
@@ -294,20 +300,26 @@ namespace tnxqsoClient
 
         private async void miSettings_Click(object sender, EventArgs e)
         {
-            FSettings fs = new FSettings( config.data);
-            if ( fs.ShowDialog(this) == DialogResult.OK )
+            await editSettings();
+        }
+
+        private async Task editSettings()
+        {
+            FSettings fs = new FSettings(config.data);
+            if (fs.ShowDialog(this) == DialogResult.OK)
             {
-                fs.blColumns.Where( x => !x.isUser).ToList().ForEach(c =>
-               {
-                   config.data.setOptionalColumnValue(c.name, c.value);
-                   config.data.optionalColumns[c.name].show = c.show;
-                   dgvQSO.Columns[c.name].Visible = c.show;
-               });
+                fs.blColumns.Where(x => !x.isUser).ToList().ForEach(c =>
+                {
+                    config.data.setOptionalColumnValue(c.name, c.value);
+                    config.data.optionalColumns[c.name].show = c.show;
+                    dgvQSO.Columns[c.name].Visible = c.show;
+                });
                 config.data.userColumns.Clear();
                 config.data.userColumns.AddRange(
                     fs.blColumns
                         .Where(x => x.isUser)
-                        .Select( x => new UserColumnSettings {
+                        .Select(x => new UserColumnSettings
+                        {
                             _name = x.name,
                             _show = x.show,
                             _value = x.value
@@ -315,7 +327,7 @@ namespace tnxqsoClient
                 );
                 for (int c = 0; c < DXpConfig.UserColumnsCount; c++)
                     updateUserColumn(c);
-                if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsReaderWirelessGW != fs.gpsReaderWirelessGW || 
+                if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsReaderWirelessGW != fs.gpsReaderWirelessGW ||
                     config.data.gpsServerLoad != fs.gpsServerLoad)
                 {
                     config.data.gpsReaderWirelessGW = fs.gpsReaderWirelessGW;
@@ -450,6 +462,12 @@ namespace tnxqsoClient
                 MessageBox.Show("Can not export to text file: " + ex.ToString(), "DXpedition", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+        }
+
+        private async void FMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.C)
+                await editSettings();
         }
     }
 

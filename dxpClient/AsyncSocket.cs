@@ -136,8 +136,6 @@ namespace AsyncConnectionNS
         public IAsyncResult _connect()
         {
             System.Diagnostics.Debug.WriteLine("Connecting to " + _host + ":" + _port.ToString());
-            System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
-            System.Diagnostics.Debug.WriteLine(t.ToString());
             try
             {
                 // Create a TCP/IP socket.
