@@ -19,6 +19,7 @@ using System.Diagnostics;
 using AutoUpdaterDotNET;
 using System.Reflection;
 using AsyncConnectionNS;
+using System.Text.RegularExpressions;
 
 namespace tnxqsoClient
 {
@@ -81,11 +82,50 @@ namespace tnxqsoClient
             List<QSO> storedQSOs = ProtoBufSerialization.ReadListItems<QSO>(qsoFilePath, out qsoEr);
             if (storedQSOs.Count > 0)
             {
+                Regex reComaNoSpace = new Regex(",(\\S)");
+                string comaNoSpaceRepl = ", $1";
+                Regex reNoRegion = new Regex("(\\w\\w)-(\\d\\d),\\s?(\\d\\d)");
+                string noRegionRepl = "$1-$2, $1-$3";
                 foreach (QSO qso in storedQSOs)
                 {
                     if (qso.freq.IndexOf('.') == -1)
                     {
                         qso.freq = QSO.formatFreq(qso.freq);
+                        qsoEr = true;
+                    }
+                    if (qso.rda != null && qso.rda.IndexOf('/') != -1)
+                    {
+                        qso.rda = qso.rda.Replace('/', ',');
+                        qsoEr = true;
+                    }
+                    if (qso.rda != null && qso.rda.IndexOf('\\') != -1)
+                    {
+                        qso.rda = qso.rda.Replace('\\', ',');
+                        qsoEr = true;
+                    }
+                    if (qso.rda != null && qso.rda.IndexOf('=') != -1)
+                    {
+                        qso.rda = qso.rda.Replace('=', '-');
+                        qsoEr = true;
+                    }
+                    if (qso.rda != null && qso.rda.IndexOf("-=") != -1)
+                    {
+                        qso.rda = qso.rda.Replace("-=", "-");
+                        qsoEr = true;
+                    }
+                    if (qso.rda != null && qso.rda.IndexOf("--") != -1)
+                    {
+                        qso.rda = qso.rda.Replace("--", "-");
+                        qsoEr = true;
+                    }
+                    if (qso.rda != null && reComaNoSpace.IsMatch(qso.rda))
+                    {
+                        qso.rda = reComaNoSpace.Replace(qso.rda, comaNoSpaceRepl);
+                        qsoEr = true;
+                    }
+                    if (qso.rda != null && reNoRegion.IsMatch(qso.rda))
+                    {
+                        qso.rda = reNoRegion.Replace(qso.rda, noRegionRepl);
                         qsoEr = true;
                     }
                     blQSO.Insert(0, qso);
@@ -404,11 +444,23 @@ namespace tnxqsoClient
         {
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
+                Dictionary<string, List<QSO>> data = new Dictionary<string, List<QSO>>();
                 blQSO
-                    .GroupBy(x => x.rda)
-                    .ToList()
-                    .ForEach(l =>
-                        writeADIF(Path.Combine(folderBrowserDialog.SelectedPath, l.First().rda + ".adi"), l.ToList(), new Dictionary<string, string>()));
+                    .Where(qso => qso.rda != null).ToList()
+                    .ForEach(qso =>
+                    {
+                        string[] rdas = qso.rda.Split(new string[] { ", " }, StringSplitOptions.None);
+                        foreach (string rda in rdas)
+                        {
+                            if (!data.ContainsKey(rda))
+                                data[rda] = new List<QSO>();
+                            data[rda].Add(qso);
+                        }
+                    });
+                data.Keys.ToList().ForEach(val =>
+                {
+                    writeADIF(Path.Combine(folderBrowserDialog.SelectedPath, val + ".adi"), data[val], new Dictionary<string, string>() { { "RDA", val } });
+                });
             }
         }
 
