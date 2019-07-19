@@ -160,15 +160,27 @@ namespace tnxqsoClient
             if (root.Name != "contactinfo")
                 return null;
 
+            string mode = root.SelectSingleNode("mode").InnerText;
+            if (mode.Equals("RTTY")) mode = "FT8";
+
+            string snt = root.SelectSingleNode("snt").InnerText;
+            string rcv = root.SelectSingleNode("rcv").InnerText;
+
+            if (mode.Equals("FT8"))
+            {
+                snt = "-10";
+                rcv = "-10";
+            }
+
             return new QSO {
                 _ts = root.SelectSingleNode("timestamp").InnerText,
                 _myCS = root.SelectSingleNode("mycall").InnerText,
                 _band = root.SelectSingleNode("band").InnerText,
                 _freq = QSO.formatFreq(root.SelectSingleNode("txfreq").InnerText),
-                _mode = root.SelectSingleNode("mode").InnerText,
+                _mode = mode,
                 _cs = root.SelectSingleNode("call").InnerText,
-                _snt = root.SelectSingleNode("snt").InnerText,
-                _rcv = root.SelectSingleNode("rcv").InnerText,
+                _snt = snt,
+                _rcv = snt,
                 _freqRx = QSO.formatFreq(root.SelectSingleNode("rxfreq").InnerText),
                 _oper = root.SelectSingleNode("operator").InnerText,
                 _no = no++,

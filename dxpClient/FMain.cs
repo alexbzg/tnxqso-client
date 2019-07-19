@@ -86,6 +86,7 @@ namespace tnxqsoClient
                 string comaNoSpaceRepl = ", $1";
                 Regex reNoRegion = new Regex("(\\w\\w)-(\\d\\d),\\s?(\\d\\d)");
                 string noRegionRepl = "$1-$2, $1-$3";
+                Regex reRDA = new Regex("[A-Z][A-Z]-\\d\\d");
                 foreach (QSO qso in storedQSOs)
                 {
                     if (qso.freq.IndexOf('.') == -1)
@@ -93,31 +94,22 @@ namespace tnxqsoClient
                         qso.freq = QSO.formatFreq(qso.freq);
                         qsoEr = true;
                     }
-                    if (qso.rda != null && qso.rda.IndexOf('/') != -1)
+                    if (qso.rda != null)
                     {
-                        qso.rda = qso.rda.Replace('/', ',');
-                        qsoEr = true;
+                        MatchCollection rdaMatches = reRDA.Matches(qso.rda);
+                        string rda = "";
+                        if (rdaMatches.Count > 1)
+                            qsoEr = true;
+                        foreach (Match rdaMatch in rdaMatches)
+                        {
+                            if (rda != "")
+                                rda += ", ";
+                            rda += rdaMatch.Value;
+                        }
+                        qso.rda = rda;
+                        
                     }
-                    if (qso.rda != null && qso.rda.IndexOf('\\') != -1)
-                    {
-                        qso.rda = qso.rda.Replace('\\', ',');
-                        qsoEr = true;
-                    }
-                    if (qso.rda != null && qso.rda.IndexOf('=') != -1)
-                    {
-                        qso.rda = qso.rda.Replace('=', '-');
-                        qsoEr = true;
-                    }
-                    if (qso.rda != null && qso.rda.IndexOf("-=") != -1)
-                    {
-                        qso.rda = qso.rda.Replace("-=", "-");
-                        qsoEr = true;
-                    }
-                    if (qso.rda != null && qso.rda.IndexOf("--") != -1)
-                    {
-                        qso.rda = qso.rda.Replace("--", "-");
-                        qsoEr = true;
-                    }
+                    /*
                     if (qso.rda != null && reComaNoSpace.IsMatch(qso.rda))
                     {
                         qso.rda = reComaNoSpace.Replace(qso.rda, comaNoSpaceRepl);
@@ -127,7 +119,7 @@ namespace tnxqsoClient
                     {
                         qso.rda = reNoRegion.Replace(qso.rda, noRegionRepl);
                         qsoEr = true;
-                    }
+                    }*/
                     blQSO.Insert(0, qso);
                     updateQsoIndex(qso);
                 }

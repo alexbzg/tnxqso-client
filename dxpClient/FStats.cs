@@ -42,17 +42,30 @@ namespace tnxqsoClient
 
             if (type == "RDA")
             {
+                Dictionary<string, TempEntry> data = new Dictionary<string, TempEntry>();
                 lQSO
-                    .GroupBy(x => x.rda)
-                    .Select(cx => new Entry
+                    .Where(qso => qso.rda != null).ToList()
+                    .ForEach(qso =>
                     {
-                        _value = cx.First().rda,
-                        _qsoCount = cx.Count(),
-                        _csCount = cx.GroupBy(x => x.cs).Count()
-                    })
-                    .OrderBy(x => x.value)
-                    .ToList()
-                    .ForEach(x => blStats.Add(x));
+                        string[] rdas = qso.rda.Split(new string[] { ", " }, StringSplitOptions.None);
+                        foreach (string rda in rdas)
+                        {
+                            if (rda.IndexOf(',') != -1)
+                                System.Diagnostics.Debug.WriteLine(qso.rda);
+                            if (!data.ContainsKey(rda))
+                                data[rda] = new TempEntry();
+                            data[rda].qsoCount += 1;
+                            data[rda].csList.Add(qso.cs);
+                        }
+                    });
+                data.Keys.ToList().OrderBy(k => k).ToList().ForEach(k => {
+                    blStats.Add(new Entry
+                    {
+                        _value = k,
+                        _csCount = data[k].csList.Count,
+                        _qsoCount = data[k].qsoCount
+                    });
+                });
             }
 
             if (type == "RAFA")
