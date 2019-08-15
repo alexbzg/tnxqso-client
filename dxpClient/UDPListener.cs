@@ -72,12 +72,12 @@ namespace UDPListenerNS
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine(e.ToString());
+                    System.Diagnostics.Trace.TraceInformation(e.ToString());
                 }
                 finally
                 {
                     listener.Close();
-                    System.Diagnostics.Debug.WriteLine("Done listening for UDP broadcast");
+                    System.Diagnostics.Trace.TraceInformation("Done listening for UDP broadcast");
                 }
             }
         }

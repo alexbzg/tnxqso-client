@@ -26,7 +26,7 @@ namespace InvokeFormNS
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine(e.ToString());
+                    System.Diagnostics.Trace.TraceInformation(e.ToString());
                 }
             }
             else

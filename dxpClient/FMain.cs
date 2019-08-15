@@ -39,12 +39,14 @@ namespace tnxqsoClient
         {
 #if DEBUG
             TextWriterTraceListener[] listeners = new TextWriterTraceListener[] {
-            new TextWriterTraceListener("debug.log"),
+            new TextWriterTraceListener("debug." + Guid.NewGuid() + ".log"),
             new TextWriterTraceListener(Console.Out)};
-            Debug.Listeners.AddRange(listeners);
+            foreach (TextWriterTraceListener listener in listeners) {
+                listener.TraceOutputOptions |= TraceOptions.DateTime;
+            }
             Trace.Listeners.AddRange(listeners);
             Trace.AutoFlush = true;
-            Debug.AutoFlush = true;
+            Trace.TraceInformation("-----------------------START---------------------------------");
 #endif
             config = new XmlConfigNS.XmlConfig<DXpConfig>();
             config.data.initialize();
@@ -235,7 +237,6 @@ namespace tnxqsoClient
                     slCoords.Text = "No GPS data";
                 });
             }
-            //gpsReader.debugCoords(new double[] { 47.2738544, 39.715804483333336 });
         }
 
         private void locationChanged( object sender, LocationChangedEventArgs e )
@@ -277,11 +278,11 @@ namespace tnxqsoClient
         private async void UDPDataReceived(object sender, DataReceivedArgs e)
         {
             string data = Encoding.UTF8.GetString(e.data);
-            System.Diagnostics.Debug.WriteLine(data);
+            System.Diagnostics.Trace.TraceInformation(data);
             QSO qso = qsoFactory.create(data);
             if (qso == null)
                 return;
-            //System.Diagnostics.Debug.WriteLine(qso.toJSON());
+            //System.Diagnostics.Trace.TraceInformation(qso.toJSON());
             dgvQSOInsert(qso);
             ProtoBufSerialization.Write<QSO>(qsoFilePath, qso, true);
             await http.postQso(qso);
@@ -319,6 +320,7 @@ namespace tnxqsoClient
 
         private void FMain_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Trace.TraceInformation("-------------------------------------------Closed by user------------------------------------------");
             udpListener.DataReceived -= UDPDataReceived;
             udpListener.StopListener();
             Application.DoEvents();
@@ -502,7 +504,7 @@ namespace tnxqsoClient
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                System.Diagnostics.Trace.TraceInformation(ex.ToString());
                 MessageBox.Show("Can not export to text file: " + ex.ToString(), "DXpedition", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
@@ -639,12 +641,11 @@ namespace tnxqsoClient
                             }
                         }
                     } while (sr.Peek() >= 0);
-                    System.Diagnostics.Debug.WriteLine(rafaData["KN97TF"]);
                 }
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
                 MessageBox.Show("Rafa data could not be loaded: " + e.ToString(), "DXpedition", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
@@ -694,7 +695,7 @@ namespace tnxqsoClient
                         lat = 24 * (lat - Math.Truncate(lat));
                         lng = 24 * (lng - Math.Truncate(lng));
                         qth += (char)(65 + lng) + (char)(65 + lat);*/
-            System.Diagnostics.Debug.WriteLine(qth);
+            System.Diagnostics.Trace.TraceInformation(qth);
             return qth;
         } // returnQth()
 

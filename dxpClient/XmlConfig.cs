@@ -32,7 +32,7 @@ namespace XmlConfigNS
                     }
                     catch (Exception e)
                     {
-                        System.Diagnostics.Debug.WriteLine(e.ToString());
+                        System.Diagnostics.Trace.TraceInformation(e.ToString());
                     }
                 }
             }
@@ -49,7 +49,7 @@ namespace XmlConfigNS
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                    System.Diagnostics.Trace.TraceInformation(ex.ToString());
                 }
             }
         }

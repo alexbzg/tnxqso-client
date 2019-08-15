@@ -1,4 +1,5 @@
 ﻿//#define DISABLE_HTTP
+#define TEST_SRV
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace tnxqsoClient
         private static int pingIntervalDef = 60 * 1000;
         private static int pingIntervalNoConnection = 5 * 1000;
         HttpClient client = new HttpClient();
-#if DEBUG
+#if DEBUG && TEST_SRV
         private static readonly Uri srvURI = new Uri("http://test.tnxqso.com/aiohttp/");
 #else
         private static readonly Uri srvURI = new Uri("http://tnxqso.com/aiohttp/");
@@ -70,7 +71,7 @@ namespace tnxqsoClient
         private async Task<HttpResponseMessage> post(string _URI, JSONSerializable data, bool warnings)
         {
             string sContent = data.serialize();
-            System.Diagnostics.Debug.WriteLine(sContent);
+            System.Diagnostics.Trace.TraceInformation(sContent);
             string URI = srvURI + _URI;
 #if DEBUG && DISABLE_HTTP
             return true;
@@ -82,11 +83,11 @@ namespace tnxqsoClient
             {
                 response = await client.PostAsync(URI, content);
                 result = response.IsSuccessStatusCode;
-                System.Diagnostics.Debug.WriteLine(response.ToString());
+                System.Diagnostics.Trace.TraceInformation(response.ToString());
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
             if (_connected != result)
             {
@@ -165,7 +166,7 @@ namespace tnxqsoClient
             try
             {
                 HttpResponseMessage response = await client.GetAsync(statusUri);
-                System.Diagnostics.Debug.WriteLine(response.ToString());
+                System.Diagnostics.Trace.TraceInformation(response.ToString());
                 if (response.IsSuccessStatusCode)
                 {
                     DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LocationResponse));
@@ -174,14 +175,14 @@ namespace tnxqsoClient
                     {
                         coords.setLat(location[0]);
                         coords.setLng(location[1]);
-                        System.Diagnostics.Debug.WriteLine("New location: " + coords.ToString());
+                        System.Diagnostics.Trace.TraceInformation("New location: " + coords.ToString());
                         locationChanged?.Invoke(this, new LocationChangedEventArgs() { coords = coords });
                     }
                 }
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
         }
 
@@ -271,7 +272,7 @@ namespace tnxqsoClient
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
             return string.Empty;
         }

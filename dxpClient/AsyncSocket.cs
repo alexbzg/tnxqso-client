@@ -73,11 +73,27 @@ namespace AsyncConnectionNS
             }
         }
 
-        
+        public static bool validateIPv4(string ipString)
+        {
+            if (String.IsNullOrWhiteSpace(ipString))
+            {
+                return false;
+            }
+
+            string[] splitValues = ipString.Split('.');
+            if (splitValues.Length != 4)
+            {
+                return false;
+            }
+
+            byte tempForParsing;
+
+            return splitValues.All(r => byte.TryParse(r, out tempForParsing));
+        }
 
         public bool connect()
         {
-            if (_host != null && !_host.Equals( string.Empty ) && _port != 0)
+            if (validateIPv4(_host) && _port != 0)
                 return connect(_host, _port);
             else
                 return false;
@@ -85,7 +101,7 @@ namespace AsyncConnectionNS
 
         public bool connect( string host, int port )
         {
-            if (host == null || host.Equals(string.Empty) || port == 0 )
+            if (!validateIPv4(host) || port == 0 )
                 return false;
             _host = host;
             _port = port;
@@ -101,14 +117,14 @@ namespace AsyncConnectionNS
                     if (socket != null && !socket.Connected)
                     {
                         socket.Close();
-                        System.Diagnostics.Debug.WriteLine("Connect timeout");
+                        System.Diagnostics.Trace.TraceInformation("Connect timeout");
                     }
                     else
                         receive();
                 }
                 if (socket == null || !socket.Connected)
                 {
-                    System.Diagnostics.Debug.WriteLine("Retries limit reached. Connect failed");
+                    System.Diagnostics.Trace.TraceInformation("Retries limit reached. Connect failed");
                     if (reconnect)
                         asyncConnect();
                 }
@@ -116,14 +132,14 @@ namespace AsyncConnectionNS
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
                 return false;
             }
         }
 
         public void connect(string host, int port, bool _async)
         {
-            if (host == null || host.Equals(string.Empty) || port == 0)
+            if (!validateIPv4(host) || port == 0)
                 return;
             _host = host;
             _port = port;
@@ -135,7 +151,7 @@ namespace AsyncConnectionNS
 
         public IAsyncResult _connect()
         {
-            System.Diagnostics.Debug.WriteLine("Connecting to " + _host + ":" + _port.ToString());
+            System.Diagnostics.Trace.TraceInformation("Connecting to " + _host + ":" + _port.ToString());
             try
             {
                 // Create a TCP/IP socket.
@@ -147,7 +163,7 @@ namespace AsyncConnectionNS
                     new AsyncCallback(connectCallback), null);
             } catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
                 return null;
             }
         }
@@ -165,8 +181,8 @@ namespace AsyncConnectionNS
             if (socket == null || !socket.Connected)
             {
                 System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
-                System.Diagnostics.Debug.WriteLine(t.ToString());
-                Debug.WriteLine("Async connect timeout");
+                System.Diagnostics.Trace.TraceInformation(t.ToString());
+                Trace.TraceInformation("Async connect timeout");
                 if (socket != null)
                     socket.Close();
                 if (reconnect)
@@ -186,8 +202,8 @@ namespace AsyncConnectionNS
             if (disconnecting)
                 return;
             System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
-            System.Diagnostics.Debug.WriteLine(t.ToString());
-            System.Diagnostics.Debug.WriteLine("disconnect");
+            System.Diagnostics.Trace.TraceInformation(t.ToString());
+            System.Diagnostics.Trace.TraceInformation("disconnect");
             disconnecting = true;
             if (requested)
                 reconnect = false;
@@ -206,7 +222,7 @@ namespace AsyncConnectionNS
                 {
                     disconnecting = false;
                     socket.EndConnect(ar);
-                    System.Diagnostics.Debug.WriteLine("Socket connected to " +
+                    System.Diagnostics.Trace.TraceInformation("Socket connected to " +
                         socket.RemoteEndPoint.ToString());
 
                     onConnected?.Invoke(this, new EventArgs { });
@@ -214,7 +230,7 @@ namespace AsyncConnectionNS
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
         }
 
@@ -222,7 +238,7 @@ namespace AsyncConnectionNS
         {
             try
             {
-                //System.Diagnostics.Debug.WriteLine("receiving");
+                //System.Diagnostics.Trace.TraceInformation("receiving");
                 // Create the state object.
                 StateObject state = new StateObject();
 
@@ -232,7 +248,7 @@ namespace AsyncConnectionNS
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
         }
 
@@ -240,7 +256,7 @@ namespace AsyncConnectionNS
         {
             try
             {
-                //System.Diagnostics.Debug.WriteLine("receive callback");
+                //System.Diagnostics.Trace.TraceInformation("receive callback");
                 // Retrieve the state object and the client socket 
                 // from the asynchronous state object.
                 StateObject state = (StateObject)ar.AsyncState;
@@ -265,7 +281,7 @@ namespace AsyncConnectionNS
                                 state.sb.Append(ch);
                                 if (ch.Equals("\n"))
                                 {
-                                    //System.Diagnostics.Debug.WriteLine("received: " + state.sb.ToString());
+                                    //System.Diagnostics.Trace.TraceInformation("received: " + state.sb.ToString());
                                     processReply(state.sb.ToString());
                                     state.sb.Clear();
                                 }
@@ -279,13 +295,13 @@ namespace AsyncConnectionNS
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
         }
 
         private void processReply(string reply)
         {
-            //System.Diagnostics.Debug.WriteLine(reply);
+            //System.Diagnostics.Trace.TraceInformation(reply);
             lineReceived?.Invoke(this, new LineReceivedEventArgs { line = reply });
         }
 
@@ -309,7 +325,7 @@ namespace AsyncConnectionNS
         {
             if (socket != null && socket.Connected)
             {
-                //Debug.WriteLine("sending: " + data);
+                //Trace.TraceInformation("sending: " + data);
                 // Convert the string data to byte data using ASCII encoding.
                 byte[] byteData = Encoding.ASCII.GetBytes(data);
                 send(byteData);
@@ -334,13 +350,13 @@ namespace AsyncConnectionNS
 
                 // Complete sending the data to the remote device.
                 int bytesSent = socket.EndSend(ar);
-                //Debug.WriteLine("Sent {0} bytes to server.", bytesSent);
+                //Trace.TraceInformation("Sent {0} bytes to server.", bytesSent);
 
                 
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
         }
 

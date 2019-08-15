@@ -157,12 +157,12 @@ namespace GPSReaderNS
         {
 #if DEBUG
 #if LOG_GPS
-            System.Diagnostics.Debug.WriteLine(e.line);
+            System.Diagnostics.Trace.TraceInformation(e.line);
 #endif
 #endif
             if (e.line.StartsWith("$GPGGA") || e.line.StartsWith("$GNGGA"))
             {
-                System.Diagnostics.Debug.WriteLine(e.line);
+                System.Diagnostics.Trace.TraceInformation(e.line);
                 parse(e.line);
             }
 
@@ -244,7 +244,7 @@ namespace GPSReaderNS
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine("Error opening port " + portName + " " + e.ToString());
+                    System.Diagnostics.Trace.TraceInformation("Error opening port " + portName + " " + e.ToString());
                 }
             }
         }
@@ -298,16 +298,16 @@ namespace GPSReaderNS
                     {
                         _coords.setLat(nLat);
                         _coords.setLng(nLng);
-                        System.Diagnostics.Debug.WriteLine("New location: " + _coords.ToString());
+                        System.Diagnostics.Trace.TraceInformation("New location: " + _coords.ToString());
                         locationChanged?.Invoke(this, new LocationChangedEventArgs() { coords = coords });
                     }
                 }
                 catch (Exception e)
                 {
                     
-                    System.Diagnostics.Debug.WriteLine(e.ToString());
+                    System.Diagnostics.Trace.TraceInformation(e.ToString());
                     System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
-                    System.Diagnostics.Debug.WriteLine(t.ToString());
+                    System.Diagnostics.Trace.TraceInformation(t.ToString());
                 }
             }
         }
@@ -316,7 +316,7 @@ namespace GPSReaderNS
         {
             _coords.setLat(_c[0]);
             _coords.setLng(_c[1]);
-            System.Diagnostics.Debug.WriteLine("New location: " + _coords.ToString());
+            System.Diagnostics.Trace.TraceInformation("New location: " + _coords.ToString());
             locationChanged?.Invoke(this, new LocationChangedEventArgs() { coords = coords });
         }
     }

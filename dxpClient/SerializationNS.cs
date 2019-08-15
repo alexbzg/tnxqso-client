@@ -66,7 +66,7 @@ namespace SerializationNS
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
         }
 
@@ -83,7 +83,7 @@ namespace SerializationNS
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
         }
 
@@ -103,7 +103,7 @@ namespace SerializationNS
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
             return default(T);
         }
@@ -126,7 +126,7 @@ namespace SerializationNS
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
             return r;
         }
@@ -150,7 +150,7 @@ namespace SerializationNS
                             }
                             catch (Exception e)
                             {
-                                System.Diagnostics.Debug.WriteLine(e.ToString());
+                                System.Diagnostics.Trace.TraceInformation(e.ToString());
                                 er = true;
                                 /*file.Position += recLength;
                                 recLength = 1;*/
@@ -163,7 +163,7 @@ namespace SerializationNS
             catch (Exception e)
             {
 
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
             return r;
         }
@@ -186,7 +186,7 @@ namespace SerializationNS
                 return output;
             } catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                System.Diagnostics.Trace.TraceInformation(e.ToString());
             }
             return string.Empty;
         }

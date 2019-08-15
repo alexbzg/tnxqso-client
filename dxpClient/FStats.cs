@@ -51,7 +51,7 @@ namespace tnxqsoClient
                         foreach (string rda in rdas)
                         {
                             if (rda.IndexOf(',') != -1)
-                                System.Diagnostics.Debug.WriteLine(qso.rda);
+                                System.Diagnostics.Trace.TraceInformation(qso.rda);
                             if (!data.ContainsKey(rda))
                                 data[rda] = new TempEntry();
                             data[rda].qsoCount += 1;
