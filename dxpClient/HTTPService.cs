@@ -190,7 +190,7 @@ namespace tnxqsoClient
         {
             if (config.token == null)
                 return;
-            HttpResponseMessage response = await post("location", new LocationData(config, config.gpsServerLoad ? coords : gpsReader.coords));
+            HttpResponseMessage response = await post("location", new LocationData(config, config.gpsServerLoad ? null : gpsReader.coords));
             if (config.gpsServerLoad)
             {
                 if (stationCallsign != null)
@@ -359,7 +359,7 @@ namespace tnxqsoClient
         Coords coords;
         [DataMember]
         public double[] location { get {
-                if ((bool)coords?.valid)
+                if (coords != null && coords.valid)
                     return new double[] { coords.lat, coords.lng };
                 else
                     return null;

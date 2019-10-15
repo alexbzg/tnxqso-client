@@ -33,14 +33,13 @@
             this.bCancel = new System.Windows.Forms.Button();
             this.cbGPSPort = new System.Windows.Forms.ComboBox();
             this.gbGPS = new System.Windows.Forms.GroupBox();
-            this.rbGPSWirelessGW = new System.Windows.Forms.RadioButton();
+            this.rbGPSServerLoad = new System.Windows.Forms.RadioButton();
             this.rbGPSSerial = new System.Windows.Forms.RadioButton();
             this.dgvColumns = new System.Windows.Forms.DataGridView();
             this.Show = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label1 = new System.Windows.Forms.Label();
-            this.rbGPSServerLoad = new System.Windows.Forms.RadioButton();
             this.gbGPS.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColumns)).BeginInit();
             this.SuspendLayout();
@@ -49,7 +48,7 @@
             // 
             this.bOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.bOK.Location = new System.Drawing.Point(407, 354);
+            this.bOK.Location = new System.Drawing.Point(407, 308);
             this.bOK.Name = "bOK";
             this.bOK.Size = new System.Drawing.Size(75, 30);
             this.bOK.TabIndex = 5;
@@ -60,7 +59,7 @@
             // 
             this.bCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bCancel.Location = new System.Drawing.Point(488, 354);
+            this.bCancel.Location = new System.Drawing.Point(488, 308);
             this.bCancel.Name = "bCancel";
             this.bCancel.Size = new System.Drawing.Size(75, 30);
             this.bCancel.TabIndex = 6;
@@ -82,27 +81,26 @@
             this.gbGPS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbGPS.Controls.Add(this.rbGPSServerLoad);
-            this.gbGPS.Controls.Add(this.rbGPSWirelessGW);
             this.gbGPS.Controls.Add(this.cbGPSPort);
             this.gbGPS.Controls.Add(this.rbGPSSerial);
             this.gbGPS.Location = new System.Drawing.Point(9, 6);
             this.gbGPS.Name = "gbGPS";
-            this.gbGPS.Size = new System.Drawing.Size(555, 120);
+            this.gbGPS.Size = new System.Drawing.Size(555, 78);
             this.gbGPS.TabIndex = 0;
             this.gbGPS.TabStop = false;
             this.gbGPS.Text = "GPS settings";
             // 
-            // rbGPSWirelessGW
+            // rbGPSServerLoad
             // 
-            this.rbGPSWirelessGW.AutoSize = true;
-            this.rbGPSWirelessGW.Location = new System.Drawing.Point(6, 56);
-            this.rbGPSWirelessGW.Name = "rbGPSWirelessGW";
-            this.rbGPSWirelessGW.Size = new System.Drawing.Size(104, 24);
-            this.rbGPSWirelessGW.TabIndex = 3;
-            this.rbGPSWirelessGW.TabStop = true;
-            this.rbGPSWirelessGW.Text = "ShareGPS";
-            this.rbGPSWirelessGW.UseVisualStyleBackColor = true;
-            this.rbGPSWirelessGW.Click += new System.EventHandler(this.rbGPSSource_Click);
+            this.rbGPSServerLoad.AutoSize = true;
+            this.rbGPSServerLoad.Location = new System.Drawing.Point(6, 51);
+            this.rbGPSServerLoad.Name = "rbGPSServerLoad";
+            this.rbGPSServerLoad.Size = new System.Drawing.Size(194, 24);
+            this.rbGPSServerLoad.TabIndex = 4;
+            this.rbGPSServerLoad.TabStop = true;
+            this.rbGPSServerLoad.Text = "Get from TNXQSO.com";
+            this.rbGPSServerLoad.UseVisualStyleBackColor = true;
+            this.rbGPSServerLoad.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // rbGPSSerial
             // 
@@ -137,10 +135,10 @@
             this.Show,
             this.name,
             this.Value});
-            this.dgvColumns.Location = new System.Drawing.Point(9, 157);
+            this.dgvColumns.Location = new System.Drawing.Point(9, 110);
             this.dgvColumns.Name = "dgvColumns";
             this.dgvColumns.RowHeadersVisible = false;
-            this.dgvColumns.Size = new System.Drawing.Size(554, 193);
+            this.dgvColumns.Size = new System.Drawing.Size(554, 192);
             this.dgvColumns.TabIndex = 4;
             this.dgvColumns.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvColumns_DataBindingComplete);
             // 
@@ -168,29 +166,17 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 133);
+            this.label1.Location = new System.Drawing.Point(11, 86);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(131, 20);
             this.label1.TabIndex = 11;
             this.label1.Text = "Columns settings";
             // 
-            // rbGPSServerLoad
-            // 
-            this.rbGPSServerLoad.AutoSize = true;
-            this.rbGPSServerLoad.Location = new System.Drawing.Point(6, 90);
-            this.rbGPSServerLoad.Name = "rbGPSServerLoad";
-            this.rbGPSServerLoad.Size = new System.Drawing.Size(194, 24);
-            this.rbGPSServerLoad.TabIndex = 4;
-            this.rbGPSServerLoad.TabStop = true;
-            this.rbGPSServerLoad.Text = "Get from TNXQSO.com";
-            this.rbGPSServerLoad.UseVisualStyleBackColor = true;
-            this.rbGPSServerLoad.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
-            // 
             // FSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(575, 395);
+            this.ClientSize = new System.Drawing.Size(575, 352);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dgvColumns);
             this.Controls.Add(this.gbGPS);
@@ -216,7 +202,6 @@
         private System.Windows.Forms.Button bCancel;
         private System.Windows.Forms.ComboBox cbGPSPort;
         private System.Windows.Forms.GroupBox gbGPS;
-        private System.Windows.Forms.RadioButton rbGPSWirelessGW;
         private System.Windows.Forms.RadioButton rbGPSSerial;
         private System.Windows.Forms.DataGridView dgvColumns;
         private System.Windows.Forms.Label label1;

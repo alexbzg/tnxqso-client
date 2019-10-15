@@ -217,9 +217,7 @@ namespace tnxqsoClient
 
         private void startGPSReader()
         {
-            if (config.data.gpsReaderWirelessGW)
-                gpsReader.listenWirelessGW();
-            else if (config.data.gpsReaderDeviceID != null)
+            if (config.data.gpsReaderDeviceID != null)
             {
                 List<SerialDeviceInfo> ports = GPSReader.listSerialDevices();
                 SerialDeviceInfo port = ports.FirstOrDefault(x => x.deviceID == config.data.gpsReaderDeviceID);
@@ -361,10 +359,8 @@ namespace tnxqsoClient
                 );
                 for (int c = 0; c < DXpConfig.UserColumnsCount; c++)
                     updateUserColumn(c);
-                if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsReaderWirelessGW != fs.gpsReaderWirelessGW ||
-                    config.data.gpsServerLoad != fs.gpsServerLoad)
+                if (config.data.gpsReaderDeviceID != fs.gpsReaderDeviceID || config.data.gpsServerLoad != fs.gpsServerLoad)
                 {
-                    config.data.gpsReaderWirelessGW = fs.gpsReaderWirelessGW;
                     config.data.gpsReaderDeviceID = fs.gpsReaderDeviceID;
                     config.data.gpsServerLoad = fs.gpsServerLoad;
                     startGPSReader();
@@ -550,7 +546,6 @@ namespace tnxqsoClient
             get { return _gpsReaderDeviceID; }
             set { _gpsReaderDeviceID = value; }
         }
-        public bool gpsReaderWirelessGW;
         public bool gpsServerLoad;
 
         [DataMember]
@@ -660,7 +655,8 @@ namespace tnxqsoClient
                         _show = true,
                         _value = null
                     };
-
+            if (string.IsNullOrEmpty(gpsReaderDeviceID))
+                gpsServerLoad = true;
         }
 
         public string toJSON()
